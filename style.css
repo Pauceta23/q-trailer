@@ -1,0 +1,39 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: greenyellow;
+}
+
+header img {
+    width: 200px;
+}
+
+header ul {
+    display: flex;
+    text-decoration: none;
+    margin-right: 5%;
+    gap: 12px;
+}
+
+header ul li {
+    list-style-type: none;
+}
+
+main {
+    background-color: coral;
+}
+
+#main-video {
+    background-color: black;
+    width: 360px;
+}
+
+#video-controls {
+    display: flex;
+    background-color: grey;
+}
+footer {
+    background-color: black;
+    color: white;
+}
