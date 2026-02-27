@@ -1,8 +1,18 @@
+body {
+    margin: 0px;
+}
+
+/* Header */
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: greenyellow;
+    background-color: rgb(194, 96, 96);
+    transition: background-color 0.2s ease-in-out; /* Smooth fade effect */
+}
+
+header:hover {
+    background-color: rgb(204, 204, 204);
 }
 
 header img {
@@ -20,20 +30,77 @@ header ul li {
     list-style-type: none;
 }
 
+/* Main content */
 main {
-    background-color: coral;
+    background-color: rgb(155, 40, 40);
+    border: 1px solid black;
 }
 
 #main-video {
     background-color: black;
-    width: 360px;
+    width: 650px;
+    height: 400px;
 }
 
 #video-controls {
     display: flex;
     background-color: grey;
 }
+
+.container {
+    background-color: rgba(255, 255, 255, 0.33);
+    padding: 16px;
+    border-radius: 12px;
+}
+
+/* Top container */
+#top-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Bottom container */
+#bottom-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Related movies */
+#related-movies {
+    background-color: rgba(255, 255, 255, 0.33);
+    padding: 16px;
+}
+
+#related-movies div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+img.related-movie {
+    width: 150px;
+    height: 220px;
+}
+
+/* Actors from the movie */
+#actors-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.33);
+    padding: 16px;
+    gap: 12px;
+}
+
+.actor img{
+    width: 150px;
+    height: 220px;
+}
+
 footer {
     background-color: black;
     color: white;
+    border: 1px solid black;
+    text-align: center;
 }

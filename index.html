@@ -16,25 +16,55 @@
     </ul>
   </header>
   <main>
-    <figure id="playerContainer">
-      <video id="main-video" preload="metadata" poster="media/img/preview.jpg" playsinline>
-        <source src="video.webm" type="video/webm; codecs='vp9, opus'">
-        <source src="video.mp4" type="video/mp4; codecs='avc1.42E01E, mp4a.40.2'">
-        <p>Error cargando video, el navegador no lo soporta.</p>
-     </video>
-      <!-- Interfaz de controles personalizada -->
-      <div id="video-controls" class="controls">
-        <!-- Botones y sliders definidos aquí -->
-        <button id="play-button">Play</button>
-        <button id="reset-button">Reset</button>
-        <button id="seek-backward-button">Seek bw</button>
-        <button id="seek-forward-button">Seek fw</button>
-        <button id="mute-button">Mute</button>
-        <div id="progress-bar">Progress bar</div>
-        <button id="settings-button">Settings</button>
-        <button id="fullscreen-button">Fullscreen</button>
+    <div id="content">
+      <div id="top-container">
+        <figure id="player-container">
+          <video id="main-video" preload="metadata" poster="media/img/preview.jpg" playsinline>
+            <source src="media/video/video.webm" type="video/webm; codecs='vp9, opus'">
+            <source src="media/video/video.mp4" type="video/mp4; codecs='avc1.42E01E, mp4a.40.2'">
+            <p>Error cargando video, el navegador no lo soporta.</p>
+          </video>
+          <!-- Interfaz de controles personalizada -->
+          <div id="video-controls" class="controls">
+            <!-- Botones y sliders definidos aquí -->
+            <button id="play-button">Play</button>
+            <button id="reset-button">Reset</button>
+            <button id="seek-backward-button">Seek bw</button>
+            <button id="seek-forward-button">Seek fw</button>
+            <button id="mute-button">Mute</button>
+            <div id="progress-bar">Progress bar</div>
+            <button id="settings-button">Settings</button>
+            <button id="fullscreen-button">Fullscreen</button>
+          </div>
+        </figure>
+        <div id="location" class="container" style="width: 400px; height: 250px;">Wikipedia</div>
+        <div id="description" class="container" style="width: 400px; height: 250px;">Location</div>
       </div>
-    </figure>
+      <div id="bottom-container">
+        <figure id="related-movies" class="container">
+          <figcaption>Peliculas parecidas</figcaption>
+          <div>
+            <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp">
+            <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp">
+            <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp">
+          </div>
+        </figure>
+        <figure id="actors-info" class="container">
+          <div class="actor">
+            <img src="media/img/harrison-ford.jpg">
+            <p>Harrison Ford</p>
+          </div>
+          <div class="actor">
+            <img src="media/img/harrison-ford.jpg">
+            <p>Harrison Ford</p>
+          </div>
+          <div class="actor">
+            <img src="media/img/harrison-ford.jpg">
+            <p>Harrison Ford</p>
+          </div>
+        </figure>
+      </div>
+    </div>
   </main>
   <footer>
     <p>Práctica GDIE Jaume & Pau Curso 2025-26</p>
