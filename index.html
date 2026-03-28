@@ -26,6 +26,8 @@
           <video id="main-video" preload="metadata" poster="media/img/preview.jpg" playsinline>
             <source src="media/video/video.webm" type="video/webm">
             <source src="media/video/video.mp4" type="video/mp4">
+            <track src="media/chapters.vtt" kind="chapters" srclang="en" label="Chapters" default>
+            <track src="media/info.vtt" kind="metadata" srclang="en" label="Info">
             <p>Error cargando video, el navegador no lo soporta.</p>
           </video>
 
@@ -41,6 +43,10 @@
             <button id="seek-forward-button">15s ⏩</button>
 
             <span id="time-display">0:00 / 0:00</span>
+
+            <select id="chapters-select">
+              <option value="">Chapters</option>
+            </select>
 
             <div id="volume-container">
               <button id="mute-button">🔊</button>
@@ -61,7 +67,7 @@
 
         <div class="col-12 col-lg-4">
           <div id="location" class="container-panel mb-3">Wikipedia</div>
-          <div id="description" class="container-panel">Location</div>
+          <div id="description" class="container-panel mb-3">Location</div>
         </div>
       </div>
 
