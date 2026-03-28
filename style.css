@@ -51,39 +51,6 @@ main {
     border-bottom: 1px solid black;
 }
 
-#main-video {
-    display: block;
-    background-color: black;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px 10px 0 0;
-}
-
-#video-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px;
-    background-color: rgba(30, 30, 30, 0.85);
-    border-radius: 0 0 10px 10px;
-}
-
-#video-controls button {
-    border: 0;
-    border-radius: 6px;
-    padding: 6px 10px;
-    background-color: #d8d8d8;
-    cursor: pointer;
-}
-
-#progress-bar {
-    min-width: 120px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background-color: #f0f0f0;
-}
-
 .container-panel {
     background-color: rgba(121, 32, 32, 0.85);
     padding: 16px;
@@ -143,4 +110,142 @@ footer {
 
 footer p {
     margin: 0;
+}
+
+/* ESTILOS DEL PLAYER */
+
+/* Ocultar controles nativos de WebKit */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+#player-container {
+  position: relative;
+  max-width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0;
+}
+
+#main-video {
+  width: 100%;
+  display: block;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.82);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  transition: opacity 0.3s ease;
+}
+
+.controls[data-state="hidden"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Barra de progreso */
+#progress-bar {
+  flex: 1 1 100%;
+  order: -1;
+  height: 4px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+#progress-bar:hover {
+  height: 6px;
+}
+
+#progress-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+}
+
+#progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #e53935;
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+  z-index: 1; /* Por encima del buffer */
+}
+
+/* Botones */
+.controls button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.controls button:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Tiempo */
+#time-display {
+  color: white;
+  font-size: 12px;
+  white-space: nowrap;
+  margin: 0 4px;
+}
+
+/* Volumen */
+#volume-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#volume-slider {
+  width: 70px;
+  accent-color: #e53935;
+  cursor: pointer;
+}
+
+/* Selector de resolución */
+#resolution-select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#resolution-select option {
+  background: #222;
+  color: white;
+}
+
+/* Espaciador para empujar fullscreen a la derecha */
+.spacer {
+  flex: 1;
 }
