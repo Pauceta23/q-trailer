@@ -18,6 +18,8 @@ const timeDisplay = document.getElementById('time-display');
 
 const resoSelect = document.getElementById('resolution-select');
 const fsBtn = document.getElementById('fullscreen-button');
+const subtitlesBtn = document.getElementById('subtitles-button');
+const subtitlesSelect = document.getElementById('subtitles-select');
 const locationPanel = document.getElementById('location');
 const descriptionPanel = document.getElementById('description');
 const actorsPanel = document.getElementById('actors-info');
@@ -26,6 +28,7 @@ const mapPanel = document.getElementById('filming-map');
 const synopsisPanel = document.getElementById('synopsis');
 let filmingMap = null;
 let filmingMarkers = null;
+let subtitlesTracks = [];
 
 const ACTOR_IMAGES = {
   "angelinajolie": "AngelinaJolie.jpg",
@@ -68,6 +71,7 @@ const ACTOR_IMAGES = {
   "kylechandler": "kyleChandler.jpg",
   "madsmikkelsen": "madsMikkelsen.jpg",
   "markruffalo": "markRuffalo.jpg",
+  "lewistan": "lewisTan.jpg",
   "maryelizabethwinstead": "maryElizabethWinstead.jpg",
   "michaelfassbender": "michaelFassbender.jpg",
   "michellerodriguez": "michelleRodriguez.jpg",
@@ -76,6 +80,9 @@ const ACTOR_IMAGES = {
   "pierrecoffin": "pierreCoffin.jpg",
   "rebeccahall": "rebeccaHall.jpg",
   "robertdowney": "robertDowney.jpg",
+  "ryanreynolds": "ryanReynolds.jpg",
+  "jodiecomer": "jodieComer.jpg",
+  "lilrelhowery": "lilRelHowery.jpg",
   "robertdowneyjr": "robertDowney.jpg",
   "ruthnegga": "ruthNegga.jpg",
   "sethrogen": "sethRogen.jpg",
@@ -261,7 +268,11 @@ fsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('fullscreenchange', () => {
+  const isFs = document.fullscreenElement === container;
   fsBtn.textContent = document.fullscreenElement ? '\u22A0' : '\u26F6';
+  if (container) {
+    container.classList.toggle('is-fullscreen', isFs);
+  }
 });
 
 // Ocultar/mostrar controles según la interacción del usuario
@@ -641,6 +652,7 @@ function initTracks() {
   const tracks = Array.from(video.textTracks || []);
   const chaptersTrack = tracks.find(t => t.kind === 'chapters');
   const infoTrack = tracks.find(t => t.kind === 'metadata');
+  subtitlesTracks = tracks.filter(t => t.kind === 'subtitles');
 
   if (chaptersTrack) {
     chaptersTrack.mode = 'hidden';
@@ -677,12 +689,85 @@ function initTracks() {
       }
     }
   }
+
+  if (subtitlesTracks.length) {
+    const preferred = subtitlesTracks.find(t => t.language === 'es')
+      || subtitlesTracks.find(t => t.language === 'ca')
+      || subtitlesTracks.find(t => t.language === 'en')
+      || subtitlesTracks[0];
+
+    subtitlesTracks.forEach(track => { track.mode = 'hidden'; });
+    if (preferred) {
+      preferred.mode = 'showing';
+      if (subtitlesSelect) subtitlesSelect.value = preferred.language || 'es';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+        subtitlesBtn.textContent = 'CC';
+      }
+    }
+  }
 }
 
 if (video.readyState >= 1) {
   initTracks();
 } else {
   video.addEventListener('loadedmetadata', initTracks);
+}
+
+if (subtitlesBtn) {
+  subtitlesBtn.addEventListener('click', () => {
+    if (!subtitlesTracks.length) {
+      initTracks();
+    }
+    if (!subtitlesTracks.length) return;
+
+    const showing = subtitlesTracks.find(t => t.mode === 'showing');
+    if (showing) {
+      subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+      if (subtitlesSelect) subtitlesSelect.value = 'off';
+      subtitlesBtn.setAttribute('aria-pressed', 'false');
+      subtitlesBtn.classList.remove('cc-active');
+      subtitlesBtn.textContent = 'CC';
+      return;
+    }
+
+    const targetLang = subtitlesSelect?.value && subtitlesSelect.value !== 'off'
+      ? subtitlesSelect.value
+      : (subtitlesTracks[0]?.language || 'es');
+    const target = subtitlesTracks.find(t => t.language === targetLang) || subtitlesTracks[0];
+    subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+    if (target) {
+      target.mode = 'showing';
+      if (subtitlesSelect) subtitlesSelect.value = target.language || 'es';
+      subtitlesBtn.setAttribute('aria-pressed', 'true');
+      subtitlesBtn.classList.add('cc-active');
+      subtitlesBtn.textContent = 'CC';
+    }
+  });
+}
+
+if (subtitlesSelect) {
+  subtitlesSelect.addEventListener('change', () => {
+    if (!subtitlesTracks.length) return;
+    const value = subtitlesSelect.value;
+    subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+    if (value === 'off') {
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'false');
+        subtitlesBtn.classList.remove('cc-active');
+      }
+      return;
+    }
+    const target = subtitlesTracks.find(t => t.language === value) || subtitlesTracks[0];
+    if (target) {
+      target.mode = 'showing';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+      }
+    }
+  });
 }
 
 //HLS/DASH

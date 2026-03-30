@@ -324,7 +324,7 @@ video::-webkit-media-controls {
   max-width: 100%;
   background: #000;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   margin: 0;
   max-height: 520px;
 }
@@ -334,6 +334,32 @@ video::-webkit-media-controls {
   display: block;
   max-height: 520px;
   object-fit: cover;
+  border-radius: 8px;
+}
+
+#player-container.is-fullscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  max-height: none;
+}
+
+#player-container.is-fullscreen #main-video {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  object-fit: contain;
+  background: #000;
+  border-radius: 0;
+}
+
+#player-container.is-fullscreen .controls {
+  border-radius: 0;
 }
 
 .controls {
@@ -342,13 +368,16 @@ video::-webkit-media-controls {
   gap: 8px;
   padding: 10px 12px;
   background: linear-gradient(180deg, rgba(12, 12, 12, 0.9), rgba(0, 0, 0, 0.95));
-  position: absolute;
-  bottom: 0;
+  position: relative;
+  bottom: auto;
   width: 100%;
   box-sizing: border-box;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   border-top: 1px solid rgba(255,255,255,0.08);
   transition: opacity 0.3s ease;
+  border-radius: 0 0 8px 8px;
+  flex: 0 0 auto;
 }
 
 .controls[data-state="hidden"] {
@@ -358,9 +387,9 @@ video::-webkit-media-controls {
 
 /* Barra de progreso */
 #progress-bar {
-  flex: 1 1 100%;
-  order: -1;
-  height: 6px;
+  flex: 1 1 auto;
+  order: 0;
+  height: 4px;
   background: rgba(255,255,255,0.25);
   border-radius: 2px;
   cursor: pointer;
@@ -412,6 +441,12 @@ video::-webkit-media-controls {
   background: rgba(255,255,255,0.2);
 }
 
+#subtitles-button.cc-active {
+  background: #e53935 !important;
+  border-color: #e53935 !important;
+  color: #fff !important;
+}
+
 /* Tiempo */
 #time-display {
   color: white;
@@ -455,11 +490,28 @@ video::-webkit-media-controls {
   color: white;
   border-radius: 4px;
   padding: 2px 6px;
-  font-size: 12px;
+  font-size: 11px;
+  height: 28px;
   cursor: pointer;
 }
 
 #chapters-select option {
+  background: #222;
+  color: white;
+}
+
+#subtitles-select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  height: 28px;
+  cursor: pointer;
+}
+
+#subtitles-select option {
   background: #222;
   color: white;
 }
