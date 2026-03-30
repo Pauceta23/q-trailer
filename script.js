@@ -22,6 +22,10 @@ const locationPanel = document.getElementById('location');
 const descriptionPanel = document.getElementById('description');
 const actorsPanel = document.getElementById('actors-info');
 const chaptersSelect = document.getElementById('chapters-select');
+const mapPanel = document.getElementById('filming-map');
+const synopsisPanel = document.getElementById('synopsis');
+let filmingMap = null;
+let filmingMarkers = null;
 
 const ACTOR_IMAGES = {
   "angelinajolie": "AngelinaJolie.jpg",
@@ -50,6 +54,7 @@ const ACTOR_IMAGES = {
   "daisyridley": "daisyRidley.jpg",
   "donaldglover": "donaldGlover.jpg",
   "elisabetholsen": "elisabethOlsen.jpg",
+  "elizabetholsen": "elisabethOlsen.jpg",
   "ellefanning": "elleFanning.jpg",
   "emmastone": "emmaStone.jpg",
   "emmathompson": "emmaThompson.jpg",
@@ -71,9 +76,11 @@ const ACTOR_IMAGES = {
   "pierrecoffin": "pierreCoffin.jpg",
   "rebeccahall": "rebeccaHall.jpg",
   "robertdowney": "robertDowney.jpg",
+  "robertdowneyjr": "robertDowney.jpg",
   "ruthnegga": "ruthNegga.jpg",
   "sethrogen": "sethRogen.jpg",
   "sophienelisse": "sophieNelisse.jpg",
+  "sophienlisse": "sophieNelisse.jpg",
   "sophieturner": "sophieTurner.jpg",
   "stevecarell": "steveCarell.jpg",
   "tarajiphenson": "tarajiPHenson.jpg",
@@ -94,7 +101,9 @@ function formatTime(secs) {
 }
 
 function updateTimeDisplay() {
-  timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
 }
 
 function updateProgress() {
@@ -109,39 +118,51 @@ function updateProgress() {
   }
 }
 
-
 // Actualizar vista del icono de mutear
 function updateMuteIcon() {
   if (video.muted || video.volume === 0) {
-    muteBtn.textContent = '🔇';
+    muteBtn.textContent = '\uD83D\uDD07';
   } else if (video.volume < 0.5) {
-    muteBtn.textContent = '🔉';
+    muteBtn.textContent = '\uD83D\uDD09';
   } else {
-    muteBtn.textContent = '🔊';
+    muteBtn.textContent = '\uD83D\uDD0A';
   }
-
+}
 
 function seekTo(timeSeconds) {
+  if (!video) return;
+  
   const target = Math.max(0, timeSeconds);
-  if (video.readyState === 0) {
-    const onMeta = () => {
-      video.removeEventListener('loadedmetadata', onMeta);
-      seekTo(target);
-    };
-    video.addEventListener('loadedmetadata', onMeta);
-    video.load();
-    return;
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  
+  // Limitar el tiempo al rango válido
+  let clamped = target;
+  if (duration > 0) {
+    clamped = Math.min(Math.max(0, target), duration);
   }
-
-  const duration = video.duration;
-  if (Number.isFinite(duration) && duration > 0) {
-    video.currentTime = Math.min(duration, target);
+  
+  // Función para aplicar el seek
+  const applySeek = () => {
+    // Usar fastSeek si está disponible (más eficiente)
+    if (typeof video.fastSeek === 'function') {
+      video.fastSeek(clamped).catch(() => {
+        video.currentTime = clamped;
+      });
+    } else {
+      video.currentTime = clamped;
+    }
+    updateProgress();
+    updateTimeDisplay();
+  };
+  
+  // Verificar si el video está listo para buscar
+  if (video.readyState >= 1) {
+    applySeek();
   } else {
-    video.currentTime = target;
+    // Esperar a que el video cargue metadatos
+    video.addEventListener('loadedmetadata', applySeek, { once: true });
   }
 }
-}
-
 
 // Funcionalidad de parar y reproducir video
 function togglePlay() {
@@ -152,30 +173,33 @@ function togglePlay() {
   }
 }
 
-video.addEventListener('play',  () => { playBtn.textContent = '⏸'; });
-video.addEventListener('pause', () => { playBtn.textContent = '▶'; });
+video.addEventListener('play',  () => { playBtn.textContent = '\u23F8'; });
+video.addEventListener('pause', () => { playBtn.textContent = '\u25B6'; });
 video.addEventListener('ended', () => {
-  playBtn.textContent = '▶';
+  playBtn.textContent = '\u25B6';
   progressFill.style.width = '100%';
 });
 
 // Parar/reproducir si se hace click sobre el video
 playBtn.addEventListener('click', togglePlay);
 video.addEventListener('click', togglePlay);
+controls.addEventListener('click', (e) => e.stopPropagation());
 
 // Resetear video
 function stopMedia() {
   video.pause();
-  video.currentTime = 0;
+  seekTo(0);
 }
 resetBtn.addEventListener('click', stopMedia);
 
 // Botones de adelantar o atrasar el video
 bwBtn.addEventListener('click', () => {
-  seekTo(video.currentTime - 15);
+  const base = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  seekTo(base - 15);
 });
 fwBtn.addEventListener('click', () => {
-  seekTo(video.currentTime + 15);
+  const base = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  seekTo(base + 15);
 });
 
 // Actualizar barra y números de la duración según los eventos
@@ -195,7 +219,6 @@ progressBar.addEventListener('click', (e) => {
     seekTo(ratio * video.duration);
   }
 });
-
 
 // Barra de progreso arrastable
 let dragging = false;
@@ -228,7 +251,6 @@ video.addEventListener('volumechange', () => {
   if (!video.muted) volSlider.value = video.volume;
 });
 
-
 // Funcionalidad pantalla completa
 fsBtn.addEventListener('click', () => {
   if (!document.fullscreenElement) {
@@ -239,9 +261,8 @@ fsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('fullscreenchange', () => {
-  fsBtn.textContent = document.fullscreenElement ? '⊠' : '⛶';
+  fsBtn.textContent = document.fullscreenElement ? '\u22A0' : '\u26F6';
 });
-
 
 // Ocultar/mostrar controles según la interacción del usuario
 let hideTimeout;
@@ -265,11 +286,9 @@ video.addEventListener('pause', () => {
   clearTimeout(hideTimeout);
 });
 
-
 // Manejo del input por teclado
 document.addEventListener('keydown', (e) => {
-  // Solo si el foco no está en un input
-  //if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+  const baseTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
   switch (e.key) {
     case ' ':
       e.preventDefault();
@@ -277,11 +296,11 @@ document.addEventListener('keydown', (e) => {
       break;
     case 'ArrowRight':
       e.preventDefault();
-      seekTo(video.currentTime + 15);
+      seekTo(baseTime + 15);
      break;
     case 'ArrowLeft':
       e.preventDefault();
-      seekTo(video.currentTime - 15);
+      seekTo(baseTime - 15);
      break;
     case 'ArrowUp':
       e.preventDefault();
@@ -306,14 +325,18 @@ document.addEventListener('keydown', (e) => {
 const wikiCache = new Map();
 
 function normalizeKey(value) {
-  return String(value || '')
+  const base = String(value || '');
+  const normalized = base.normalize ? base.normalize('NFD') : base;
+  return normalized
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '');
 }
 
 function actorImageFor(name) {
   const key = normalizeKey(name);
-  const file = ACTOR_IMAGES[key];
+  const keyNoSuffix = key.replace(/(jr|sr)$/, '');
+  const file = ACTOR_IMAGES[key] || ACTOR_IMAGES[keyNoSuffix];
   return file ? `media/img/actores/${file}` : '';
 }
 
@@ -421,11 +444,116 @@ function renderActors(actors) {
     actorsPanel.innerHTML = '<p>Sin actores.</p>';
     return;
   }
-  actorsPanel.innerHTML = actors.map(name => {
+  const cards = actors.map(name => {
     const img = actorImageFor(name);
-    const imgTag = img ? `<img src="${img}" alt="${name}">` : '';
+    const imgTag = img
+      ? `<img src="${img}" alt="${name}">`
+      : `<div class="actor-placeholder">${name.split(' ').map(p => p[0]).join('').slice(0, 2)}</div>`;
     return `<div class="actor">${imgTag}<p>${name}</p></div>`;
   }).join('');
+  actorsPanel.innerHTML = `<figcaption>Actores</figcaption><div class="actors-grid">${cards}</div>`;
+}
+
+function extractCountries(locations) {
+  if (!Array.isArray(locations)) return [];
+  const cleaned = locations.map(item => {
+    if (!item) return '';
+    const parts = String(item).split(',');
+    return parts[parts.length - 1].trim();
+  }).filter(Boolean);
+
+  const normalized = cleaned.map(name => {
+    const lower = name.toLowerCase();
+    if (['england', 'scotland', 'wales', 'northern ireland', 'united kingdom', 'uk'].includes(lower)) {
+      return 'United Kingdom';
+    }
+    if (['united states', 'usa', 'u.s.', 'u.s.a.'].includes(lower)) {
+      return 'United States';
+    }
+    return name;
+  });
+
+  return Array.from(new Set(normalized));
+}
+
+function countryToCoords(country) {
+  const coords = {
+    'United States': [37.1, -95.7],
+    'Canada': [56.1, -106.3],
+    'United Kingdom': [55.3, -3.4],
+    'Australia': [-25.3, 133.8],
+    'Dominican Republic': [19.0, -70.7],
+    'Colombia': [4.6, -74.1],
+    'Hungary': [47.1, 19.5],
+    'Morocco': [31.8, -7.1],
+    'Italy': [41.9, 12.6],
+    'Jordan': [31.2, 36.2],
+    'Iceland': [64.9, -18.6],
+    'Hong Kong': [22.3, 114.2],
+    'Mexico': [23.6, -102.5],
+    'United Arab Emirates': [24.3, 54.2]
+  };
+  return coords[country] || null;
+}
+
+function latLonToPercent(lat, lon) {
+  const x = ((lon + 180) / 360) * 100;
+  const y = ((90 - lat) / 180) * 100;
+  return { x, y };
+}
+
+function renderFilmingMap(locations) {
+  if (!mapPanel) return;
+  const countries = extractCountries(locations);
+  if (!countries.length) {
+    mapPanel.innerHTML = '<figcaption>Paises de rodaje</figcaption><p>Sin datos de rodaje.</p>';
+    return;
+  }
+
+  const chips = countries.map(country => `<span class="map-country">${country}</span>`).join('');
+
+  mapPanel.innerHTML = `
+    <figcaption>Paises de rodaje</figcaption>
+    <div class="map-canvas">
+      <div id="filming-map-canvas" class="map-leaflet" aria-label="Mapa mundial"></div>
+    </div>
+    <div class="map-countries">${chips}</div>
+  `;
+
+  if (typeof L === 'undefined') return;
+
+  if (filmingMap) {
+    filmingMap.remove();
+    filmingMap = null;
+  }
+
+  filmingMap = L.map('filming-map-canvas', {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: true,
+    scrollWheelZoom: false
+  }).setView([20, 0], 1);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 6,
+    minZoom: 1
+  }).addTo(filmingMap);
+
+  filmingMarkers = L.layerGroup().addTo(filmingMap);
+
+  countries.forEach(country => {
+    const coord = countryToCoords(country);
+    if (!coord) return;
+    L.circleMarker(coord, {
+      radius: 5,
+      color: '#ff4d4d',
+      weight: 2,
+      fillColor: '#ff4d4d',
+      fillOpacity: 0.7
+    }).bindTooltip(country).addTo(filmingMarkers);
+  });
+
+  setTimeout(() => filmingMap && filmingMap.invalidateSize(), 50);
 }
 
 function renderInfo(data) {
@@ -434,6 +562,8 @@ function renderInfo(data) {
   const poster = data.poster || '';
   const url = data.url || '';
   const actors = Array.isArray(data.actors) ? data.actors : [];
+  const locations = Array.isArray(data.filmingLocation) ? data.filmingLocation : [];
+  const synopsis = data.synopsis || data.summary || '';
 
   const posterHtml = poster ? `<img class="info-poster" src="${poster}" alt="Poster ${title}">` : '';
   const linkHtml = url ? `<a class="info-link" href="${url}" target="_blank" rel="noopener">Wikipedia</a>` : '';
@@ -442,6 +572,14 @@ function renderInfo(data) {
   }
 
   renderActors(actors);
+  renderFilmingMap(locations);
+
+  if (synopsisPanel) {
+    synopsisPanel.innerHTML = `
+      <figcaption>Sinopsis</figcaption>
+      <p>${synopsis || 'Sinopsis no disponible.'}</p>
+    `;
+  }
 
   fetchWikidataInfo(title, url)
     .then(wiki => renderWikipediaInfo(title, wiki))
@@ -454,28 +592,49 @@ function renderInfo(data) {
 
 function buildChaptersSelect(track) {
   if (!chaptersSelect || !track || !track.cues) return;
-  chaptersSelect.innerHTML = '<option value=\"\">Chapters</option>';
+  
+  // Limpiar opciones existentes
+  chaptersSelect.innerHTML = '<option value="">Chapters</option>';
+  
+  // Añadir opciones de capítulos
   Array.from(track.cues).forEach((cue, index) => {
     const option = document.createElement('option');
-    option.value = String(index);
+    option.value = index;
     option.textContent = cue.text;
     chaptersSelect.appendChild(option);
   });
-  chaptersSelect.addEventListener('change', () => {
+  
+  // Eliminar event listener anterior si existe
+  chaptersSelect.removeEventListener('change', handleChapterChange);
+  
+  // Añadir nuevo event listener
+  function handleChapterChange() {
     const idx = Number(chaptersSelect.value);
     const cue = track.cues && track.cues[idx];
-    if (!cue) return;
-    seekTo(cue.startTime + 0.05);
-    video.play();
-  });
+    if (cue) {
+      seekTo(cue.startTime);
+      video.play().catch(() => {});
+    }
+  }
+  
+  chaptersSelect.addEventListener('change', handleChapterChange);
 }
 
 function syncChapterSelect(track) {
-  if (!chaptersSelect || !track) return;
+  if (!chaptersSelect || !track || !track.cues) return;
+  
   const cue = track.activeCues && track.activeCues[0];
-  if (!cue) return;
-  const index = Array.from(track.cues).indexOf(cue);
-  if (index >= 0) chaptersSelect.value = String(index);
+  if (cue) {
+    const index = Array.from(track.cues).indexOf(cue);
+    if (index >= 0 && chaptersSelect.value !== String(index)) {
+      chaptersSelect.value = String(index);
+    }
+  } else {
+    // Si no hay capítulo activo, resetear el selector
+    if (chaptersSelect.value !== "") {
+      chaptersSelect.value = "";
+    }
+  }
 }
 
 function initTracks() {
@@ -520,8 +679,11 @@ function initTracks() {
   }
 }
 
-video.addEventListener('loadedmetadata', initTracks);
-
+if (video.readyState >= 1) {
+  initTracks();
+} else {
+  video.addEventListener('loadedmetadata', initTracks);
+}
 
 //HLS/DASH
 

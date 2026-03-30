@@ -56,10 +56,61 @@ main {
     padding: 16px;
     border-radius: 12px;
     min-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-fill {
+    height: 100%;
+}
+
+.panel-col {
+    display: flex;
+}
+
+.panel-col .container-panel {
+    flex: 1;
+    width: 100%;
+}
+
+.top-info-col {
+    display: flex;
+}
+
+.info-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+}
+
+.panel-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.left-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.container-panel figcaption {
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #ffffff;
 }
 
 #location {
     background: linear-gradient(160deg, rgba(180, 70, 70, 0.92), rgba(95, 26, 26, 0.92));
+    color: #fff;
+    flex: 1;
+}
+
+#filming-map {
+    background: rgba(35, 20, 20, 0.9);
     color: #fff;
 }
 
@@ -67,6 +118,18 @@ main {
     background: rgba(15, 15, 15, 0.88);
     color: #fff;
     text-align: center;
+}
+
+#synopsis {
+    background: rgba(20, 20, 20, 0.9);
+    color: #fff;
+    min-height: 215px;
+}
+
+#synopsis p {
+    margin: 0;
+    color: #f5f5f5;
+    line-height: 1.5;
 }
 
 .controls select {
@@ -123,13 +186,27 @@ main {
 }
 
 /* Related movies */
+#related-movies {
+    text-align: left;
+}
+
 #related-movies div {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    margin-top: 12px;
+}
+
+#related-movies figcaption,
+#actors-info figcaption {
+    font-weight: 700;
+    color: #ffffff;
+    text-align: left;
+}
+
+#actors-info figcaption {
+    flex-basis: 100%;
 }
 
 img.related-movie {
@@ -142,10 +219,20 @@ img.related-movie {
 /* Actors from the movie */
 #actors-info {
     display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 12px;
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+    color: #ffffff;
+}
+
+.actors-grid {
+    display: flex;
     flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .actor {
@@ -162,6 +249,55 @@ img.related-movie {
 .actor p {
     margin: 8px 0 0;
     font-weight: 600;
+    color: #ffffff;
+}
+
+#actors-info .actor p {
+    color: #ffffff;
+}
+
+.actor-placeholder {
+    width: 120px;
+    height: 170px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.map-canvas {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+    background: #111;
+}
+
+.map-leaflet {
+    width: 100%;
+    height: 100%;
+}
+
+.map-countries {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.map-country {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
 }
 
 footer {
@@ -190,11 +326,14 @@ video::-webkit-media-controls {
   border-radius: 8px;
   overflow: hidden;
   margin: 0;
+  max-height: 520px;
 }
 
 #main-video {
   width: 100%;
   display: block;
+  max-height: 520px;
+  object-fit: cover;
 }
 
 .controls {
