@@ -213,16 +213,76 @@ document.addEventListener('keydown', (e) => {
 
 //HLS/DASH
 
-// ── Resolución (altura del video) ────────────────────────────────────────────
-// Nota: para cambiar resolución real necesitarías fuentes distintas por calidad
-// (HLS/DASH). Este control cambia la altura del elemento como ejemplo visual,
-// o puedes ampliar la lógica para cambiar src según la resolución elegida.
-// resoSelect.addEventListener('change', () => {
-  // const val = resoSelect.value;
-  // if (val) {
-    // // Ejemplo: ajustar altura del elemento (en producción cambiarías la fuente)
-    // video.style.maxHeight = val + 'px';
-  // } else {
-    // video.style.maxHeight = '';
-  // }
-// });
+const player = dashjs.MediaPlayer().create();
+
+player.initialize(
+  document.getElementById('main-video'),
+  'media/dash-mpeg/manifest.mpd',
+  true
+);
+
+player.updateSettings({
+  streaming: {
+    abr: {
+      autoSwitchBitrate: { video: true, audio: true },
+      initialBitrate: { video: 1500 }
+    },
+    buffer: {
+      fastSwitchEnabled: true,
+      bufferTimeAtTopQuality: 30,
+      bufferToKeep: 10
+    }
+  }
+});
+
+player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, (e) => {
+  console.log('Calidad cambiada a:', e.newQuality);
+});
+
+player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+  const qualities = player.getRepresentationsByType('video');
+
+  resoSelect.innerHTML = '<option value="auto">Auto</option>';
+  qualities.forEach((q) => {
+    const opt = document.createElement('option');
+    opt.value = q.height;
+    //opt.textContent = `${q.height}p`;
+    opt.textContent = `${q.height}p — ${q.bitrateInKbit} kbps`;
+    resoSelect.appendChild(opt);
+  });
+
+  resoSelect.addEventListener('change', () => {
+    const val = resoSelect.value;
+
+    if (val === 'auto') {
+      player.updateSettings({
+        streaming: { abr: { autoSwitchBitrate: { video: true } } }
+      });
+    } else {
+      player.updateSettings({
+        streaming: { abr: { autoSwitchBitrate: { video: false } } }
+      });
+
+      //const index = qualities.findIndex(q => q.height === parseInt(val));
+      //if (index !== -1) {
+        //player.setQualityFor('video', index);
+      //}
+      const index = qualities.findIndex(q => q.height === parseInt(val));
+      if (index !== -1) {
+        player.setRepresentationForTypeById('video', qualities[index].id); // ✅ v5 API
+      }
+    }
+  });
+});
+
+
+
+
+//fallback en caso de que mpeg-dash no este disponible
+if (typeof MediaSource !== 'undefined') {
+  // DASH playback
+  player.initialize(document.getElementById('main-video'), 'media/dash-mpeg/manifest.mpd', false);
+} else {
+  // Fallback para navegadores muy antiguos
+  document.getElementById('main-video').src = 'media/video/video.mp4';
+}
