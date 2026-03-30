@@ -22,6 +22,10 @@ const locationPanel = document.getElementById('location');
 const descriptionPanel = document.getElementById('description');
 const actorsPanel = document.getElementById('actors-info');
 const chaptersSelect = document.getElementById('chapters-select');
+const mapPanel = document.getElementById('filming-map');
+const synopsisPanel = document.getElementById('synopsis');
+let filmingMap = null;
+let filmingMarkers = null;
 
 const ACTOR_IMAGES = {
   "angelinajolie": "AngelinaJolie.jpg",
@@ -50,6 +54,7 @@ const ACTOR_IMAGES = {
   "daisyridley": "daisyRidley.jpg",
   "donaldglover": "donaldGlover.jpg",
   "elisabetholsen": "elisabethOlsen.jpg",
+  "elizabetholsen": "elisabethOlsen.jpg",
   "ellefanning": "elleFanning.jpg",
   "emmastone": "emmaStone.jpg",
   "emmathompson": "emmaThompson.jpg",
@@ -71,9 +76,11 @@ const ACTOR_IMAGES = {
   "pierrecoffin": "pierreCoffin.jpg",
   "rebeccahall": "rebeccaHall.jpg",
   "robertdowney": "robertDowney.jpg",
+  "robertdowneyjr": "robertDowney.jpg",
   "ruthnegga": "ruthNegga.jpg",
   "sethrogen": "sethRogen.jpg",
   "sophienelisse": "sophieNelisse.jpg",
+  "sophienlisse": "sophieNelisse.jpg",
   "sophieturner": "sophieTurner.jpg",
   "stevecarell": "steveCarell.jpg",
   "tarajiphenson": "tarajiPHenson.jpg",
@@ -94,7 +101,9 @@ function formatTime(secs) {
 }
 
 function updateTimeDisplay() {
-  timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
 }
 
 function updateProgress() {
@@ -113,33 +122,53 @@ function updateProgress() {
 // Actualizar vista del icono de mutear
 function updateMuteIcon() {
   if (video.muted || video.volume === 0) {
-    muteBtn.textContent = '🔇';
+    muteBtn.textContent = '\uD83D\uDD07';
   } else if (video.volume < 0.5) {
-    muteBtn.textContent = '🔉';
+    muteBtn.textContent = '\uD83D\uDD09';
   } else {
-    muteBtn.textContent = '🔊';
+    muteBtn.textContent = '\uD83D\uDD0A';
   }
-
+}
 
 function seekTo(timeSeconds) {
   const target = Math.max(0, timeSeconds);
-  if (video.readyState === 0) {
-    const onMeta = () => {
-      video.removeEventListener('loadedmetadata', onMeta);
-      seekTo(target);
-    };
-    video.addEventListener('loadedmetadata', onMeta);
-    video.load();
+  const setTime = (value) => {
+    if (typeof video.fastSeek === 'function') {
+      try {
+        video.fastSeek(value);
+      } catch {
+        video.currentTime = value;
+      }
+    } else {
+      video.currentTime = value;
+    }
+    updateProgress();
+    updateTimeDisplay();
+  };
+  const applySeek = () => {
+    const duration = Number.isFinite(video.duration) ? video.duration : 0;
+    const clamped = duration > 0
+      ? Math.min(Math.max(0, target), Math.max(0, duration - 0.01))
+      : target;
+    if (video.seekable && video.seekable.length) {
+      const start = video.seekable.start(0);
+      const end = video.seekable.end(video.seekable.length - 1);
+      setTime(Math.min(Math.max(clamped, start), end));
+    } else {
+      setTime(clamped);
+    }
+  };
+
+  if (video.readyState < 1) {
+    video.addEventListener('loadedmetadata', applySeek, { once: true });
     return;
   }
 
-  const duration = video.duration;
-  if (Number.isFinite(duration) && duration > 0) {
-    video.currentTime = Math.min(duration, target);
-  } else {
-    video.currentTime = target;
+  if (video.readyState < 2) {
+    video.addEventListener('loadeddata', applySeek, { once: true });
   }
-}
+
+  applySeek();
 }
 
 
@@ -152,16 +181,17 @@ function togglePlay() {
   }
 }
 
-video.addEventListener('play',  () => { playBtn.textContent = '⏸'; });
-video.addEventListener('pause', () => { playBtn.textContent = '▶'; });
+video.addEventListener('play',  () => { playBtn.textContent = '\u23F8'; });
+video.addEventListener('pause', () => { playBtn.textContent = '\u25B6'; });
 video.addEventListener('ended', () => {
-  playBtn.textContent = '▶';
+  playBtn.textContent = '\u25B6';
   progressFill.style.width = '100%';
 });
 
 // Parar/reproducir si se hace click sobre el video
 playBtn.addEventListener('click', togglePlay);
 video.addEventListener('click', togglePlay);
+controls.addEventListener('click', (e) => e.stopPropagation());
 
 // Resetear video
 function stopMedia() {
@@ -172,10 +202,12 @@ resetBtn.addEventListener('click', stopMedia);
 
 // Botones de adelantar o atrasar el video
 bwBtn.addEventListener('click', () => {
-  seekTo(video.currentTime - 15);
+  const base = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  seekTo(base - 15);
 });
 fwBtn.addEventListener('click', () => {
-  seekTo(video.currentTime + 15);
+  const base = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  seekTo(base + 15);
 });
 
 // Actualizar barra y números de la duración según los eventos
@@ -239,7 +271,7 @@ fsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('fullscreenchange', () => {
-  fsBtn.textContent = document.fullscreenElement ? '⊠' : '⛶';
+  fsBtn.textContent = document.fullscreenElement ? '\u22A0' : '\u26F6';
 });
 
 
@@ -270,6 +302,7 @@ video.addEventListener('pause', () => {
 document.addEventListener('keydown', (e) => {
   // Solo si el foco no está en un input
   //if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+  const baseTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
   switch (e.key) {
     case ' ':
       e.preventDefault();
@@ -277,11 +310,11 @@ document.addEventListener('keydown', (e) => {
       break;
     case 'ArrowRight':
       e.preventDefault();
-      seekTo(video.currentTime + 15);
+      seekTo(baseTime + 15);
      break;
     case 'ArrowLeft':
       e.preventDefault();
-      seekTo(video.currentTime - 15);
+      seekTo(baseTime - 15);
      break;
     case 'ArrowUp':
       e.preventDefault();
@@ -306,14 +339,18 @@ document.addEventListener('keydown', (e) => {
 const wikiCache = new Map();
 
 function normalizeKey(value) {
-  return String(value || '')
+  const base = String(value || '');
+  const normalized = base.normalize ? base.normalize('NFD') : base;
+  return normalized
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '');
 }
 
 function actorImageFor(name) {
   const key = normalizeKey(name);
-  const file = ACTOR_IMAGES[key];
+  const keyNoSuffix = key.replace(/(jr|sr)$/, '');
+  const file = ACTOR_IMAGES[key] || ACTOR_IMAGES[keyNoSuffix];
   return file ? `media/img/actores/${file}` : '';
 }
 
@@ -421,11 +458,116 @@ function renderActors(actors) {
     actorsPanel.innerHTML = '<p>Sin actores.</p>';
     return;
   }
-  actorsPanel.innerHTML = actors.map(name => {
+  const cards = actors.map(name => {
     const img = actorImageFor(name);
-    const imgTag = img ? `<img src="${img}" alt="${name}">` : '';
+    const imgTag = img
+      ? `<img src="${img}" alt="${name}">`
+      : `<div class="actor-placeholder">${name.split(' ').map(p => p[0]).join('').slice(0, 2)}</div>`;
     return `<div class="actor">${imgTag}<p>${name}</p></div>`;
   }).join('');
+  actorsPanel.innerHTML = `<figcaption>Actores</figcaption><div class="actors-grid">${cards}</div>`;
+}
+
+function extractCountries(locations) {
+  if (!Array.isArray(locations)) return [];
+  const cleaned = locations.map(item => {
+    if (!item) return '';
+    const parts = String(item).split(',');
+    return parts[parts.length - 1].trim();
+  }).filter(Boolean);
+
+  const normalized = cleaned.map(name => {
+    const lower = name.toLowerCase();
+    if (['england', 'scotland', 'wales', 'northern ireland', 'united kingdom', 'uk'].includes(lower)) {
+      return 'United Kingdom';
+    }
+    if (['united states', 'usa', 'u.s.', 'u.s.a.'].includes(lower)) {
+      return 'United States';
+    }
+    return name;
+  });
+
+  return Array.from(new Set(normalized));
+}
+
+function countryToCoords(country) {
+  const coords = {
+    'United States': [37.1, -95.7],
+    'Canada': [56.1, -106.3],
+    'United Kingdom': [55.3, -3.4],
+    'Australia': [-25.3, 133.8],
+    'Dominican Republic': [19.0, -70.7],
+    'Colombia': [4.6, -74.1],
+    'Hungary': [47.1, 19.5],
+    'Morocco': [31.8, -7.1],
+    'Italy': [41.9, 12.6],
+    'Jordan': [31.2, 36.2],
+    'Iceland': [64.9, -18.6],
+    'Hong Kong': [22.3, 114.2],
+    'Mexico': [23.6, -102.5],
+    'United Arab Emirates': [24.3, 54.2]
+  };
+  return coords[country] || null;
+}
+
+function latLonToPercent(lat, lon) {
+  const x = ((lon + 180) / 360) * 100;
+  const y = ((90 - lat) / 180) * 100;
+  return { x, y };
+}
+
+function renderFilmingMap(locations) {
+  if (!mapPanel) return;
+  const countries = extractCountries(locations);
+  if (!countries.length) {
+    mapPanel.innerHTML = '<figcaption>Paises de rodaje</figcaption><p>Sin datos de rodaje.</p>';
+    return;
+  }
+
+  const chips = countries.map(country => `<span class="map-country">${country}</span>`).join('');
+
+  mapPanel.innerHTML = `
+    <figcaption>Paises de rodaje</figcaption>
+    <div class="map-canvas">
+      <div id="filming-map-canvas" class="map-leaflet" aria-label="Mapa mundial"></div>
+    </div>
+    <div class="map-countries">${chips}</div>
+  `;
+
+  if (typeof L === 'undefined') return;
+
+  if (filmingMap) {
+    filmingMap.remove();
+    filmingMap = null;
+  }
+
+  filmingMap = L.map('filming-map-canvas', {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: true,
+    scrollWheelZoom: false
+  }).setView([20, 0], 1);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 6,
+    minZoom: 1
+  }).addTo(filmingMap);
+
+  filmingMarkers = L.layerGroup().addTo(filmingMap);
+
+  countries.forEach(country => {
+    const coord = countryToCoords(country);
+    if (!coord) return;
+    L.circleMarker(coord, {
+      radius: 5,
+      color: '#ff4d4d',
+      weight: 2,
+      fillColor: '#ff4d4d',
+      fillOpacity: 0.7
+    }).bindTooltip(country).addTo(filmingMarkers);
+  });
+
+  setTimeout(() => filmingMap && filmingMap.invalidateSize(), 50);
 }
 
 function renderInfo(data) {
@@ -434,6 +576,8 @@ function renderInfo(data) {
   const poster = data.poster || '';
   const url = data.url || '';
   const actors = Array.isArray(data.actors) ? data.actors : [];
+  const locations = Array.isArray(data.filmingLocation) ? data.filmingLocation : [];
+  const synopsis = data.synopsis || data.summary || '';
 
   const posterHtml = poster ? `<img class="info-poster" src="${poster}" alt="Poster ${title}">` : '';
   const linkHtml = url ? `<a class="info-link" href="${url}" target="_blank" rel="noopener">Wikipedia</a>` : '';
@@ -442,6 +586,14 @@ function renderInfo(data) {
   }
 
   renderActors(actors);
+  renderFilmingMap(locations);
+
+  if (synopsisPanel) {
+    synopsisPanel.innerHTML = `
+      <figcaption>Sinopsis</figcaption>
+      <p>${synopsis || 'Sinopsis no disponible.'}</p>
+    `;
+  }
 
   fetchWikidataInfo(title, url)
     .then(wiki => renderWikipediaInfo(title, wiki))
@@ -466,7 +618,7 @@ function buildChaptersSelect(track) {
     const cue = track.cues && track.cues[idx];
     if (!cue) return;
     seekTo(cue.startTime + 0.05);
-    video.play();
+    video.play().catch(() => {});
   });
 }
 
@@ -520,7 +672,11 @@ function initTracks() {
   }
 }
 
-video.addEventListener('loadedmetadata', initTracks);
+if (video.readyState >= 1) {
+  initTracks();
+} else {
+  video.addEventListener('loadedmetadata', initTracks);
+}
 
 
 //HLS/DASH
