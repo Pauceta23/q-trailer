@@ -118,7 +118,6 @@ function updateProgress() {
   }
 }
 
-
 // Actualizar vista del icono de mutear
 function updateMuteIcon() {
   if (video.muted || video.volume === 0) {
@@ -131,46 +130,39 @@ function updateMuteIcon() {
 }
 
 function seekTo(timeSeconds) {
+  if (!video) return;
+  
   const target = Math.max(0, timeSeconds);
-  const setTime = (value) => {
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  
+  // Limitar el tiempo al rango válido
+  let clamped = target;
+  if (duration > 0) {
+    clamped = Math.min(Math.max(0, target), duration);
+  }
+  
+  // Función para aplicar el seek
+  const applySeek = () => {
+    // Usar fastSeek si está disponible (más eficiente)
     if (typeof video.fastSeek === 'function') {
-      try {
-        video.fastSeek(value);
-      } catch {
-        video.currentTime = value;
-      }
+      video.fastSeek(clamped).catch(() => {
+        video.currentTime = clamped;
+      });
     } else {
-      video.currentTime = value;
+      video.currentTime = clamped;
     }
     updateProgress();
     updateTimeDisplay();
   };
-  const applySeek = () => {
-    const duration = Number.isFinite(video.duration) ? video.duration : 0;
-    const clamped = duration > 0
-      ? Math.min(Math.max(0, target), Math.max(0, duration - 0.01))
-      : target;
-    if (video.seekable && video.seekable.length) {
-      const start = video.seekable.start(0);
-      const end = video.seekable.end(video.seekable.length - 1);
-      setTime(Math.min(Math.max(clamped, start), end));
-    } else {
-      setTime(clamped);
-    }
-  };
-
-  if (video.readyState < 1) {
+  
+  // Verificar si el video está listo para buscar
+  if (video.readyState >= 1) {
+    applySeek();
+  } else {
+    // Esperar a que el video cargue metadatos
     video.addEventListener('loadedmetadata', applySeek, { once: true });
-    return;
   }
-
-  if (video.readyState < 2) {
-    video.addEventListener('loadeddata', applySeek, { once: true });
-  }
-
-  applySeek();
 }
-
 
 // Funcionalidad de parar y reproducir video
 function togglePlay() {
@@ -196,7 +188,7 @@ controls.addEventListener('click', (e) => e.stopPropagation());
 // Resetear video
 function stopMedia() {
   video.pause();
-  video.currentTime = 0;
+  seekTo(0);
 }
 resetBtn.addEventListener('click', stopMedia);
 
@@ -227,7 +219,6 @@ progressBar.addEventListener('click', (e) => {
     seekTo(ratio * video.duration);
   }
 });
-
 
 // Barra de progreso arrastable
 let dragging = false;
@@ -260,7 +251,6 @@ video.addEventListener('volumechange', () => {
   if (!video.muted) volSlider.value = video.volume;
 });
 
-
 // Funcionalidad pantalla completa
 fsBtn.addEventListener('click', () => {
   if (!document.fullscreenElement) {
@@ -273,7 +263,6 @@ fsBtn.addEventListener('click', () => {
 document.addEventListener('fullscreenchange', () => {
   fsBtn.textContent = document.fullscreenElement ? '\u22A0' : '\u26F6';
 });
-
 
 // Ocultar/mostrar controles según la interacción del usuario
 let hideTimeout;
@@ -297,11 +286,8 @@ video.addEventListener('pause', () => {
   clearTimeout(hideTimeout);
 });
 
-
 // Manejo del input por teclado
 document.addEventListener('keydown', (e) => {
-  // Solo si el foco no está en un input
-  //if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
   const baseTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
   switch (e.key) {
     case ' ':
@@ -606,28 +592,49 @@ function renderInfo(data) {
 
 function buildChaptersSelect(track) {
   if (!chaptersSelect || !track || !track.cues) return;
-  chaptersSelect.innerHTML = '<option value=\"\">Chapters</option>';
+  
+  // Limpiar opciones existentes
+  chaptersSelect.innerHTML = '<option value="">Chapters</option>';
+  
+  // Añadir opciones de capítulos
   Array.from(track.cues).forEach((cue, index) => {
     const option = document.createElement('option');
-    option.value = String(index);
+    option.value = index;
     option.textContent = cue.text;
     chaptersSelect.appendChild(option);
   });
-  chaptersSelect.addEventListener('change', () => {
+  
+  // Eliminar event listener anterior si existe
+  chaptersSelect.removeEventListener('change', handleChapterChange);
+  
+  // Añadir nuevo event listener
+  function handleChapterChange() {
     const idx = Number(chaptersSelect.value);
     const cue = track.cues && track.cues[idx];
-    if (!cue) return;
-    seekTo(cue.startTime + 0.05);
-    video.play().catch(() => {});
-  });
+    if (cue) {
+      seekTo(cue.startTime);
+      video.play().catch(() => {});
+    }
+  }
+  
+  chaptersSelect.addEventListener('change', handleChapterChange);
 }
 
 function syncChapterSelect(track) {
-  if (!chaptersSelect || !track) return;
+  if (!chaptersSelect || !track || !track.cues) return;
+  
   const cue = track.activeCues && track.activeCues[0];
-  if (!cue) return;
-  const index = Array.from(track.cues).indexOf(cue);
-  if (index >= 0) chaptersSelect.value = String(index);
+  if (cue) {
+    const index = Array.from(track.cues).indexOf(cue);
+    if (index >= 0 && chaptersSelect.value !== String(index)) {
+      chaptersSelect.value = String(index);
+    }
+  } else {
+    // Si no hay capítulo activo, resetear el selector
+    if (chaptersSelect.value !== "") {
+      chaptersSelect.value = "";
+    }
+  }
 }
 
 function initTracks() {
@@ -677,7 +684,6 @@ if (video.readyState >= 1) {
 } else {
   video.addEventListener('loadedmetadata', initTracks);
 }
-
 
 //HLS/DASH
 
