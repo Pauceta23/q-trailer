@@ -441,11 +441,6 @@ video::-webkit-media-controls {
   background: rgba(255,255,255,0.2);
 }
 
-#subtitles-button.cc-active {
-  background: #e53935 !important;
-  border-color: #e53935 !important;
-  color: #fff !important;
-}
 
 /* Tiempo */
 #time-display {
