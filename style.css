@@ -1,5 +1,8 @@
-body {
-    margin: 0px;
+﻿body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #1f1f1f;
+    background-color: #f2f2f2;
 }
 
 /* Header */
@@ -16,91 +19,499 @@ header:hover {
 }
 
 header img {
-    width: 200px;
+    width: 180px;
+    max-width: 40vw;
 }
 
 header ul {
     display: flex;
-    text-decoration: none;
-    margin-right: 5%;
-    gap: 12px;
+    gap: 16px;
+    padding: 0;
+    margin: 0;
 }
 
 header ul li {
     list-style-type: none;
 }
 
+header a {
+    color: #1f1f1f;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
 /* Main content */
 main {
-    background-color: rgb(155, 40, 40);
-    border: 1px solid black;
+    background: linear-gradient(180deg, rgb(155, 40, 40) 0%, rgb(121, 32, 32) 100%);
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
-#main-video {
-    background-color: black;
-    width: 650px;
-    height: 400px;
-}
-
-#video-controls {
-    display: flex;
-    background-color: grey;
-}
-
-.container {
-    background-color: rgba(255, 255, 255, 0.33);
+.container-panel {
+    background-color: rgba(121, 32, 32, 0.85);
     padding: 16px;
     border-radius: 12px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Top container */
-#top-container {
-    display: flex;
-    justify-content: space-around;
+.panel-fill {
+    height: 100%;
 }
 
-/* Bottom container */
-#bottom-container {
+.panel-col {
     display: flex;
-    justify-content: space-around;
+}
+
+.panel-col .container-panel {
+    flex: 1;
+    width: 100%;
+}
+
+.top-info-col {
+    display: flex;
+}
+
+.info-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+}
+
+.panel-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.left-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.container-panel figcaption {
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #ffffff;
+}
+
+#location {
+    background: linear-gradient(160deg, rgba(180, 70, 70, 0.92), rgba(95, 26, 26, 0.92));
+    color: #fff;
+    flex: 1;
+}
+
+#filming-map {
+    background: rgba(35, 20, 20, 0.9);
+    color: #fff;
+}
+
+#description {
+    background: rgba(15, 15, 15, 0.88);
+    color: #fff;
+    text-align: center;
+}
+
+#synopsis {
+    background: rgba(20, 20, 20, 0.9);
+    color: #fff;
+    min-height: 215px;
+}
+
+#synopsis p {
+    margin: 0;
+    color: #f5f5f5;
+    line-height: 1.5;
+}
+
+.controls select {
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.info-title {
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.info-poster {
+    width: 100%;
+    border-radius: 8px;
+    margin: 8px 0;
+    display: block;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+.info-link {
+    color: #f2f2f2;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+    word-break: break-word;
+}
+
+.info-link:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 6px 12px;
+    font-size: 0.95rem;
+}
+
+.info-grid .label {
+    color: #f2f2f2;
+    font-weight: 600;
+}
+
+.info-grid .value {
+    color: #ffffff;
 }
 
 /* Related movies */
 #related-movies {
-    background-color: rgba(255, 255, 255, 0.33);
-    padding: 16px;
+    text-align: left;
 }
 
 #related-movies div {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
+}
+
+#related-movies figcaption,
+#actors-info figcaption {
+    font-weight: 700;
+    color: #ffffff;
+    text-align: left;
+}
+
+#actors-info figcaption {
+    flex-basis: 100%;
 }
 
 img.related-movie {
     width: 150px;
     height: 220px;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
 /* Actors from the movie */
 #actors-info {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.33);
-    padding: 16px;
     gap: 12px;
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+    color: #ffffff;
 }
 
-.actor img{
-    width: 150px;
-    height: 220px;
+.actors-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.actor {
+    text-align: center;
+}
+
+.actor img {
+    width: 120px;
+    height: 170px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.actor p {
+    margin: 8px 0 0;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+#actors-info .actor p {
+    color: #ffffff;
+}
+
+.actor-placeholder {
+    width: 120px;
+    height: 170px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.map-canvas {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+    background: #111;
+}
+
+.map-leaflet {
+    width: 100%;
+    height: 100%;
+}
+
+.map-countries {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.map-country {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
 }
 
 footer {
     background-color: black;
     color: white;
-    border: 1px solid black;
+    border-top: 1px solid black;
     text-align: center;
+    padding: 12px;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* ESTILOS DEL PLAYER */
+
+/* Ocultar controles nativos de WebKit */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+#player-container {
+  position: relative;
+  max-width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: visible;
+  margin: 0;
+  max-height: 520px;
+}
+
+#main-video {
+  width: 100%;
+  display: block;
+  max-height: 520px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+#player-container.is-fullscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  max-height: none;
+}
+
+#player-container.is-fullscreen #main-video {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  object-fit: contain;
+  background: #000;
+  border-radius: 0;
+}
+
+#player-container.is-fullscreen .controls {
+  border-radius: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(12, 12, 12, 0.9), rgba(0, 0, 0, 0.95));
+  position: relative;
+  bottom: auto;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  transition: opacity 0.3s ease;
+  border-radius: 0 0 8px 8px;
+  flex: 0 0 auto;
+}
+
+.controls[data-state="hidden"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Barra de progreso */
+#progress-bar {
+  flex: 1 1 auto;
+  order: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+#progress-bar:hover {
+  height: 6px;
+}
+
+#progress-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+}
+
+#progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #e53935;
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+  z-index: 1; /* Por encima del buffer */
+}
+
+/* Botones */
+.controls button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.controls button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+/* Tiempo */
+#time-display {
+  color: white;
+  font-size: 12px;
+  white-space: nowrap;
+  margin: 0 4px;
+}
+
+/* Volumen */
+#volume-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#volume-slider {
+  width: 70px;
+  accent-color: #e53935;
+  cursor: pointer;
+}
+
+/* Selector de resolución */
+#resolution-select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#resolution-select option {
+  background: #222;
+  color: white;
+}
+
+#chapters-select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  height: 28px;
+  cursor: pointer;
+}
+
+#chapters-select option {
+  background: #222;
+  color: white;
+}
+
+#subtitles-select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  height: 28px;
+  cursor: pointer;
+}
+
+#subtitles-select option {
+  background: #222;
+  color: white;
+}
+
+/* Espaciador para empujar fullscreen a la derecha */
+.spacer {
+  flex: 1;
 }
