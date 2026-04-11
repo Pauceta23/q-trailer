@@ -18,6 +18,7 @@ const timeDisplay = document.getElementById('time-display');
 
 const resoSelect = document.getElementById('resolution-select');
 const fsBtn = document.getElementById('fullscreen-button');
+const subtitlesBtn = document.getElementById('subtitles-button');
 const subtitlesSelect = document.getElementById('subtitles-select');
 const locationPanel = document.getElementById('location');
 const descriptionPanel = document.getElementById('description');
@@ -699,6 +700,11 @@ function initTracks() {
     if (preferred) {
       preferred.mode = 'showing';
       if (subtitlesSelect) subtitlesSelect.value = preferred.language || 'es';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+        subtitlesBtn.textContent = 'CC';
+      }
     }
   }
 }
@@ -709,17 +715,57 @@ if (video.readyState >= 1) {
   video.addEventListener('loadedmetadata', initTracks);
 }
 
+if (subtitlesBtn) {
+  subtitlesBtn.addEventListener('click', () => {
+    if (!subtitlesTracks.length) {
+      initTracks();
+    }
+    if (!subtitlesTracks.length) return;
+
+    const showing = subtitlesTracks.find(t => t.mode === 'showing');
+    if (showing) {
+      subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+      if (subtitlesSelect) subtitlesSelect.value = 'off';
+      subtitlesBtn.setAttribute('aria-pressed', 'false');
+      subtitlesBtn.classList.remove('cc-active');
+      subtitlesBtn.textContent = 'CC';
+      return;
+    }
+
+    const targetLang = subtitlesSelect?.value && subtitlesSelect.value !== 'off'
+      ? subtitlesSelect.value
+      : (subtitlesTracks[0]?.language || 'es');
+    const target = subtitlesTracks.find(t => t.language === targetLang) || subtitlesTracks[0];
+    subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+    if (target) {
+      target.mode = 'showing';
+      if (subtitlesSelect) subtitlesSelect.value = target.language || 'es';
+      subtitlesBtn.setAttribute('aria-pressed', 'true');
+      subtitlesBtn.classList.add('cc-active');
+      subtitlesBtn.textContent = 'CC';
+    }
+  });
+}
+
 if (subtitlesSelect) {
   subtitlesSelect.addEventListener('change', () => {
     if (!subtitlesTracks.length) return;
     const value = subtitlesSelect.value;
     subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
     if (value === 'off') {
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'false');
+        subtitlesBtn.classList.remove('cc-active');
+      }
       return;
     }
     const target = subtitlesTracks.find(t => t.language === value) || subtitlesTracks[0];
     if (target) {
       target.mode = 'showing';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+      }
     }
   });
 }
@@ -749,7 +795,7 @@ player.updateSettings({
 });
 
 player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, (e) => {
-  console.log('Calidad cambiada a:', e.newQuality);
+  console.log('Calidad cambiada a:', e);
 });
 
 player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
