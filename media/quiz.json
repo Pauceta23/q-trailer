@@ -1,0 +1,327 @@
+[
+  {
+    "movie": "Ad Astra",
+    "time": 7,
+    "question": "¿Qué tuvieron que corregir con CGI en la escena donde Brad Pitt llora en gravedad cero?",
+    "options": [
+      "El color del traje espacial estaba mal",
+      "Una lágrima flotaba de forma incorrecta según la física real del espacio",
+      "El fondo estelar tenía errores de renderizado",
+      "Los movimientos del actor no eran realistas"
+    ],
+    "correct": 1,
+    "fun_fact": "El director James Gray amó tanto la actuación de Pitt que, en vez de regrabar, pidió a los artistas de efectos visuales que simulasen cómo flotaría realmente una lágrima en microgravedad."
+  },
+  {
+    "movie": "Avengers: Endgame",
+    "time": 27,
+    "question": "¿Cuál fue la última escena rodada de Avengers: Endgame, añadida en reshoots tras ver la reacción del público de prueba?",
+    "options": [
+      "La batalla final contra Thanos con todos los héroes",
+      "El funeral de Tony Stark a orillas del lago",
+      "Tony Stark diciendo 'I am Iron Man' y chasquear los dedos",
+      "Steve Rogers pasando el escudo a Sam Wilson"
+    ],
+    "correct": 2,
+    "fun_fact": "El público de prueba pidió un cierre más contundente para Tony Stark. Este momento icónico se rodó en reshoots en enero de 2019 y se convirtió en uno de los más memorables de todo el MCU."
+  },
+  {
+    "movie": "Chaos Walking",
+    "time": 48,
+    "question": "¿Cuánto tiempo pasó entre el inicio del rodaje de Chaos Walking y su estreno en cines?",
+    "options": [
+      "Menos de 1 año",
+      "Aproximadamente 2 años",
+      "Más de 3 años",
+      "Exactamente 5 años"
+    ],
+    "correct": 2,
+    "fun_fact": "El rodaje empezó en 2017, pero la película pasó por costosos reshoots en 2019 y no llegó a los cines hasta 2021, más de tres años después. El presupuesto final superó los 100 millones de dólares."
+  },
+  {
+    "movie": "Cruella",
+    "time": 70,
+    "question": "¿Cuántos trajes distintos creó la diseñadora de vestuario Jenny Beavan para Emma Stone en Cruella?",
+    "options": [
+      "Más de 40",
+      "Más de 60",
+      "Más de 100",
+      "Más de 150"
+    ],
+    "correct": 2,
+    "fun_fact": "Entre los más de 100 trajes creados destaca el icónico vestido del camión de basura, cuya cola medía 12 metros de largo. Emma Stone pasaba entre 2 y 3 horas diarias en maquillaje y peluquería."
+  },
+  {
+    "movie": "Doctor Strange in the Multiverse of Madness",
+    "time": 90,
+    "question": "¿Qué director tomó las riendas de Doctor Strange en el Multiverso de la Locura, famoso por la saga de terror Evil Dead?",
+    "options": [
+      "Wes Craven",
+      "James Wan",
+      "Sam Raimi",
+      "Jordan Peele"
+    ],
+    "correct": 2,
+    "fun_fact": "Sam Raimi también dirigió la trilogía original de Spider-Man (2002-2007), convirtiendo su regreso a Marvel en un momento de plena nostalgia. Elizabeth Olsen llegó al rodaje en Londres solo 2 días después de terminar WandaVision."
+  },
+  {
+    "movie": "Fast & Furious 9",
+    "time": 113,
+    "question": "¿Qué dos personajes de Fast & Furious 9 viajan al espacio en un coche-cohete improvisado?",
+    "options": [
+      "Dom y Brian",
+      "Roman y Tej",
+      "Jakob y Otto",
+      "Letty y Mia"
+    ],
+    "correct": 1,
+    "fun_fact": "La aventura espacial de Roman y Tej se convirtió en meme instantáneo, resumiendo perfectamente la evolución de la saga: de carreras callejeras ilegales a literalmente salir de la órbita terrestre."
+  },
+  {
+    "movie": "47 Meters Down: Uncaged",
+    "time": 133,
+    "question": "Dos hijas de actores muy famosos protagonizan 47 Metros: Sin Salida. ¿De qué actores son hijas?",
+    "options": [
+      "Tom Cruise y Will Smith",
+      "Jamie Foxx y Sylvester Stallone",
+      "Denzel Washington y Morgan Freeman",
+      "Johnny Depp y Nicolas Cage"
+    ],
+    "correct": 1,
+    "fun_fact": "Corinne Foxx (hija de Jamie Foxx) y Sistine Stallone (hija de Sylvester Stallone) protagonizaron juntas la película, ambas haciendo su debut en el cine. Las dos tuvieron que actuar buceando con botellas de oxígeno."
+  },
+  {
+    "movie": "Free Guy",
+    "time": 156,
+    "question": "Free Guy (2021) logró un récord importante durante la pandemia de COVID-19. ¿Cuál fue?",
+    "options": [
+      "Primera película de Ryan Reynolds en superar los 1.000 millones de dólares",
+      "Primera película original no secuela en cruzar los 100 millones domésticos durante el COVID",
+      "Primera película rodada completamente con pantalla verde",
+      "Primer film co-escrito con inteligencia artificial"
+    ],
+    "correct": 1,
+    "fun_fact": "Free Guy demostró que las ideas originales, sin secuelas ni franquicias previas, podían ser grandes éxitos en plena pandemia, recaudando 331 millones de dólares globalmente con un presupuesto de 100 millones."
+  },
+  {
+    "movie": "Gemini Man",
+    "time": 176,
+    "question": "¿A qué revolucionaria velocidad de fotogramas rodó Ang Lee Gemini Man, comparado con los 24fps estándar del cine?",
+    "options": [
+      "48 fps",
+      "60 fps",
+      "120 fps",
+      "240 fps"
+    ],
+    "correct": 2,
+    "fun_fact": "A pesar de su innovación técnica, Gemini Man fue un fracaso comercial. Muy pocos cines podían proyectarla a 120fps, y la película perdió unos 75 millones de dólares. El joven Will Smith fue creado 100% por CGI."
+  },
+  {
+    "movie": "Godzilla vs. Kong",
+    "time": 199,
+    "question": "¿Cuál es el gracioso apodo que el equipo de producción le puso a la cabeza izquierda de King Ghidorah?",
+    "options": [
+      "Kevin",
+      "Chad",
+      "Derek",
+      "Barry"
+    ],
+    "correct": 0,
+    "fun_fact": "El apodo 'Kevin' nació en la película anterior, Godzilla: Rey de los Monstruos (2019), para describir el comportamiento caótico e impredecible de esa cabeza. Se volvió tan popular que apareció en merchandising oficial."
+  },
+  {
+    "movie": "Godzilla: King of the Monsters",
+    "time": 220,
+    "question": "¿Cuántos Titanes distintos aparecen o son mencionados en Godzilla: Rey de los Monstruos?",
+    "options": [
+      "5",
+      "10",
+      "17",
+      "25"
+    ],
+    "correct": 2,
+    "fun_fact": "El director Michael Dougherty incluyó referencias a 17 monstruos Titán distintos como homenaje a la saga Toho original japonesa, convirtiendo la película en un festín de referencias para fans veteranos de Godzilla."
+  },
+  {
+    "movie": "Maleficent: Mistress of Evil",
+    "time": 241,
+    "question": "¿Qué actor reemplazó a Brenton Thwaites como el Príncipe Felipe en Maléfica: Maestra del Mal?",
+    "options": [
+      "Timothée Chalamet",
+      "Harris Dickinson",
+      "Robert Pattinson",
+      "Jack O'Connell"
+    ],
+    "correct": 1,
+    "fun_fact": "Brenton Thwaites estaba ocupado filmando la serie Titans cuando comenzó la producción, lo que llevó a su reemplazo. Harris Dickinson ganó el papel con tan solo 22 años."
+  },
+  {
+    "movie": "Men in Black: International",
+    "time": 261,
+    "question": "Hombres de Negro: Internacional fue originalmente concebida como un crossover con otra franquicia de comedia. ¿Cuál?",
+    "options": [
+      "Ghostbusters",
+      "21 Jump Street",
+      "The Hangover",
+      "Ace Ventura"
+    ],
+    "correct": 1,
+    "fun_fact": "El crossover con Channing Tatum y Jonah Hill estuvo oficialmente en desarrollo durante años. Cuando no prosperó, se creó este spin-off independiente con Chris Hemsworth y Tessa Thompson, que ya habían compartido química en Thor: Ragnarok."
+  },
+  {
+    "movie": "Minions: The Rise of Gru",
+    "time": 282,
+    "question": "¿Qué récord curioso tiene Minions: El Origen de Gru debido a sus múltiples retrasos por la pandemia?",
+    "options": [
+      "Película animada más cara jamás producida",
+      "Película animada con la campaña de marketing más larga de la historia (2+ años)",
+      "Primera película animada en recaudar 1.000 millones post-COVID",
+      "Mayor estreno simultáneo en número de países"
+    ],
+    "correct": 1,
+    "fun_fact": "Planeada para julio de 2020, fue retrasada a 2021 y finalmente a 2022. La espera generó el fenómeno viral #GentleMinions, donde jóvenes vestidos de traje acudían al cine en grupos para verla."
+  },
+  {
+    "movie": "Mortal Kombat",
+    "time": 305,
+    "question": "¿Cuál es el nombre del personaje totalmente original creado para la película Mortal Kombat (2021), que no aparece en ningún videojuego?",
+    "options": [
+      "Kano",
+      "Cole Young",
+      "Sonya Blade",
+      "Jax Briggs"
+    ],
+    "correct": 1,
+    "fun_fact": "Cole Young fue creado como personaje puente para nuevas audiencias. Su dragón tatuado como invitación al torneo es una ingeniosa forma de introducir a los espectadores en el universo de Mortal Kombat sin conocimientos previos."
+  },
+  {
+    "movie": "Rocketman",
+    "time": 327,
+    "question": "Elton John, como productor ejecutivo de Rocketman, insistió en una cosa crucial. ¿Qué se negó a permitir?",
+    "options": [
+      "Que otro artista cantase sus canciones en el film",
+      "Que la película suavizase su vida para obtener una clasificación más apta para todos los públicos",
+      "Que se cambiase el título de la película",
+      "Que se rodase en Hollywood en vez de en el Reino Unido"
+    ],
+    "correct": 1,
+    "fun_fact": "Cuando los estudios sugirieron suavizar el contenido para una clasificación más accesible, Elton John respondió: 'No he llevado una vida para mayores de 12 años.' Rocketman fue la primera gran película de estudio con una escena romántica explícita entre dos hombres."
+  },
+  {
+    "movie": "Onward",
+    "time": 347,
+    "question": "¿En qué tragedia personal del director Dan Scanlon se inspiró directamente la historia de Onward?",
+    "options": [
+      "La pérdida de su hogar en un incendio forestal",
+      "La muerte de su padre cuando él tenía solo 1 año de edad",
+      "Tener que mudarse a otro país siendo niño",
+      "Su hermano mayor con una enfermedad crónica grave"
+    ],
+    "correct": 1,
+    "fun_fact": "El único registro de la voz del padre de Scanlon era un clip de audio de un segundo con solo dos palabras. Esta búsqueda de reconectar con alguien que ya no está es el corazón emocional de toda la película."
+  },
+  {
+    "movie": "Sonic the Hedgehog",
+    "time": 368,
+    "question": "El diseño original de Sonic fue tan rechazado por los fans que la película tuvo que retrasarse. ¿Cuánto costó aproximadamente el rediseño?",
+    "options": [
+      "500.000 dólares",
+      "2 millones de dólares",
+      "5 millones de dólares",
+      "15 millones de dólares"
+    ],
+    "correct": 2,
+    "fun_fact": "El rediseño tardó casi 5 meses. El animador jefe, Tim Miller, agradeció públicamente a los fans por su honestidad. El Sonic rediseñado fue un éxito rotundo: recaudó 319 millones de dólares en todo el mundo."
+  },
+  {
+    "movie": "Spider-Man: Far From Home",
+    "time": 388,
+    "question": "¿Qué récord histórico para la franquicia estableció Spider-Man: Lejos de Casa en taquilla?",
+    "options": [
+      "Mayor fin de semana de apertura de Spider-Man",
+      "Primera película de Spider-Man en superar los 1.000 millones de dólares globalmente",
+      "Mayor cantidad de efectos visuales de toda la saga",
+      "Film de Spider-Man con mayor duración en cartelera"
+    ],
+    "correct": 1,
+    "fun_fact": "Recaudó 1.132 millones de dólares. Fue también la primera película del UCM tras Avengers: Endgame, convirtiéndola en el cierre oficial de la Fase 3, aunque Marvel lo negó al principio para evitar spoilers."
+  },
+  {
+    "movie": "Spider-Man: No Way Home",
+    "time": 409,
+    "question": "Spider-Man: No Way Home se convirtió en uno de los films más taquilleros de la historia. ¿Cuánto recaudó globalmente?",
+    "options": [
+      "Alrededor de 1.200 millones de dólares",
+      "Alrededor de 1.500 millones de dólares",
+      "Alrededor de 1.900 millones de dólares",
+      "Alrededor de 2.500 millones de dólares"
+    ],
+    "correct": 2,
+    "fun_fact": "Con 1.901 millones de dólares, llegó a ser el tercer film más taquillero de la historia. Tobey Maguire y Andrew Garfield pasaron menos de dos semanas en el set durante los cinco meses totales de rodaje."
+  },
+  {
+    "movie": "Star Wars Episode IX: The Rise of Skywalker",
+    "time": 430,
+    "question": "¿Qué actor regresó a Star Wars: El Ascenso de Skywalker por primera vez desde 1983, marcando el mayor paréntesis entre apariciones de un personaje principal en la saga?",
+    "options": [
+      "Harrison Ford como Han Solo",
+      "Carrie Fisher mediante material de archivo",
+      "Mark Hamill como Luke Skywalker",
+      "Billy Dee Williams como Lando Calrissian"
+    ],
+    "correct": 3,
+    "fun_fact": "Billy Dee Williams volvió como Lando Calrissian 36 años después de El Retorno del Jedi (1983). También se convirtió en el primer actor de la saga en interpretar a un personaje no binario de género fluido en material oficial de Star Wars."
+  },
+  {
+    "movie": "The Lion King",
+    "time": 453,
+    "question": "El Rey León (2019) usó CGI fotorrealista revolucionario. De los 1.490 planos de la película, ¿cuántos son fotografías reales tomadas en África?",
+    "options": [
+      "Aproximadamente 200",
+      "Aproximadamente 50",
+      "Exactamente 10",
+      "Solo 1"
+    ],
+    "correct": 3,
+    "fun_fact": "El director Jon Favreau confirmó que únicamente el plano de apertura de 'El Círculo de la Vida' es una fotografía real de África. Todo lo demás —animales, paisajes, cielos— es CGI puro. La película ganó el Oscar a Mejor Efectos Visuales."
+  },
+  {
+    "movie": "Thor: Love and Thunder",
+    "time": 474,
+    "question": "En Thor: Love and Thunder, Chris Hemsworth llevó a su familia al set. ¿Quién de ellos aparece interpretando a Love, la hija adoptiva de Thor?",
+    "options": [
+      "Su esposa Elsa Pataky",
+      "Su hija India Rose Hemsworth",
+      "Su hermano Liam Hemsworth",
+      "Su padre Craig Hemsworth"
+    ],
+    "correct": 1,
+    "fun_fact": "India Rose Hemsworth interpretó a Love, el personaje que Thor adopta al final del film. Además, uno de los gemelos de Hemsworth apareció como el joven Thor durante la narración de Korg al inicio de la película."
+  },
+  {
+    "movie": "Top Gun: Maverick",
+    "time": 494,
+    "question": "Tom Cruise retrasó Top Gun: Maverick durante años para garantizar una cosa fundamental. ¿Qué se negó categóricamente a hacer?",
+    "options": [
+      "Rodar sin realizar él mismo las acrobacias aéreas",
+      "Vender los derechos de streaming a plataformas como Netflix o Amazon",
+      "Usar CGI para las secuencias de vuelo en lugar de aviones reales",
+      "Hacer una precuela en lugar de una secuela directa"
+    ],
+    "correct": 1,
+    "fun_fact": "Cruise rechazó ofertas multimillonarias de Netflix, Apple TV+ y otras plataformas durante la pandemia. Su insistencia en el estreno exclusivo en cines fue recompensada: la película recaudó 1.496 millones de dólares, convirtiéndose en la más taquillera de su carrera."
+  },
+  {
+    "movie": "X-Men: Dark Phoenix",
+    "time": 514,
+    "question": "Hans Zimmer compuso la banda sonora de X-Men: Fénix Oscura a pesar de haberse retirado de un género específico. ¿De cuál?",
+    "options": [
+      "Películas de ciencia ficción",
+      "Películas de fantasía épica",
+      "Películas de superhéroes y cómics",
+      "Películas de acción y aventuras"
+    ],
+    "correct": 2,
+    "fun_fact": "Zimmer había declarado su retiro del género de superhéroes tras Batman v Superman. El director Simon Kinberg le convenció personalmente para volver con esta película, que resultó ser el cierre de la saga X-Men original de Fox."
+  }
+]

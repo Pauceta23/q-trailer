@@ -26,15 +26,15 @@
         <div class="col-12 col-lg-8 panel-stack">
           <figure id="player-container" class="mb-0">
             <video id="main-video" preload="metadata" poster="media/img/preview.jpg" playsinline>
-            <!--<source src="media/video/video.webm" type="video/webm">
+              <!--<source src="media/video/video.webm" type="video/webm">
             <source src="media/video/video.mp4" type="video/mp4">-->
-            <track src="media/chapters.vtt" kind="chapters" srclang="en" label="Chapters" default>
-            <track src="media/info.vtt" kind="metadata" srclang="en" label="Info">
-            <track src="media/subtitles.vtt" kind="subtitles" srclang="en" label="English">
-            <track src="media/subtitles.es.vtt" kind="subtitles" srclang="es" label="Español" default>
-            <track src="media/subtitles.ca.vtt" kind="subtitles" srclang="ca" label="Català">
-            <p>Error cargando video, el navegador no lo soporta.</p>
-          </video>
+              <track src="media/chapters.vtt" kind="chapters" srclang="en" label="Chapters" default>
+              <track src="media/info.vtt" kind="metadata" srclang="en" label="Info">
+              <track src="media/subtitles.vtt" kind="subtitles" srclang="en" label="English">
+              <track src="media/subtitles.es.vtt" kind="subtitles" srclang="es" label="Español" default>
+              <track src="media/subtitles.ca.vtt" kind="subtitles" srclang="ca" label="Català">
+              <p>Error cargando video, el navegador no lo soporta.</p>
+            </video>
 
             <div id="video-controls" class="controls" data-state="hidden">
               <div id="progress-bar">
@@ -58,25 +58,43 @@
                 <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1">
               </div>
 
-            <select id="resolution-select">
-              <option value="auto">Auto</option>
-              <option value="360">360p</option>
-              <option value="720">720p</option>
-              <option value="2160">2160p</option>
-            </select>
+              <!-- SELECTOR DE FORMATO -->
+              <div class="format-selector">
+                <label for="format-select" style="color: white; font-size: 12px;">🎬</label>
+                <select id="format-select">
+                  <option value="dash">DASH</option>
+                  <option value="hls">HLS</option>
+                </select>
+              </div>
 
-            <select id="subtitles-select">
-              <option value="off">CC Off</option>
-              <option value="es">ES</option>
-              <option value="ca">CA</option>
-              <option value="en">EN</option>
-            </select>
+              <!-- Dentro de #video-controls, añade este selector antes o después de resolution-select -->
+              <div class="format-selector">
+                <label for="format-select" style="color: white; font-size: 12px; margin-right: 5px;">Formato:</label>
+                <select id="format-select">
+                  <option value="dash">DASH (MPEG-DASH)</option>
+                  <option value="hls">HLS (Apple HLS)</option>
+                </select>
+              </div>
 
-            <button id="subtitles-button" aria-pressed="false">CC</button>
 
-            <div class="spacer"></div>
-            <button id="fullscreen-button">⛶</button>
-          </div>
+
+              <select id="resolution-select">
+                <option value="auto">Auto</option>
+                <option value="360">360p</option>
+                <option value="720">720p</option>
+                <option value="2160">2160p</option>
+              </select>
+
+              <select id="subtitles-select">
+                <option value="off">CC Off</option>
+                <option value="es">ES</option>
+                <option value="ca">CA</option>
+                <option value="en">EN</option>
+              </select>
+
+              <div class="spacer"></div>
+              <button id="fullscreen-button">⛶</button>
+            </div>
           </figure>
 
           <figure id="actors-info" class="container-panel">
@@ -100,6 +118,11 @@
           <figure id="synopsis" class="container-panel">
             <figcaption>Sinopsis</figcaption>
             <p>Selecciona un capitulo para ver su sinopsis.</p>
+          </figure>
+
+          <figure id="quiz" class="container-panel">
+            <figcaption>Quiz</figcaption>
+            <p>Selecciona un capitulo para activar el quiz.</p>
           </figure>
         </div>
 
