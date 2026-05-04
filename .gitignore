@@ -1,2 +1,3 @@
-media/video/*
-!media/video/.gitkeep
+media/video
+media/dash-mpeg
+media/hls

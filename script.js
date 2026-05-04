@@ -18,6 +18,7 @@ const timeDisplay = document.getElementById('time-display');
 
 const resoSelect = document.getElementById('resolution-select');
 const fsBtn = document.getElementById('fullscreen-button');
+const subtitlesBtn = document.getElementById('subtitles-button');
 const subtitlesSelect = document.getElementById('subtitles-select');
 const locationPanel = document.getElementById('location');
 const descriptionPanel = document.getElementById('description');
@@ -699,6 +700,11 @@ function initTracks() {
     if (preferred) {
       preferred.mode = 'showing';
       if (subtitlesSelect) subtitlesSelect.value = preferred.language || 'es';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+        subtitlesBtn.textContent = 'CC';
+      }
     }
   }
 }
@@ -709,93 +715,159 @@ if (video.readyState >= 1) {
   video.addEventListener('loadedmetadata', initTracks);
 }
 
+if (subtitlesBtn) {
+  subtitlesBtn.addEventListener('click', () => {
+    if (!subtitlesTracks.length) {
+      initTracks();
+    }
+    if (!subtitlesTracks.length) return;
+
+    const showing = subtitlesTracks.find(t => t.mode === 'showing');
+    if (showing) {
+      subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+      if (subtitlesSelect) subtitlesSelect.value = 'off';
+      subtitlesBtn.setAttribute('aria-pressed', 'false');
+      subtitlesBtn.classList.remove('cc-active');
+      subtitlesBtn.textContent = 'CC';
+      return;
+    }
+
+    const targetLang = subtitlesSelect?.value && subtitlesSelect.value !== 'off'
+      ? subtitlesSelect.value
+      : (subtitlesTracks[0]?.language || 'es');
+    const target = subtitlesTracks.find(t => t.language === targetLang) || subtitlesTracks[0];
+    subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
+    if (target) {
+      target.mode = 'showing';
+      if (subtitlesSelect) subtitlesSelect.value = target.language || 'es';
+      subtitlesBtn.setAttribute('aria-pressed', 'true');
+      subtitlesBtn.classList.add('cc-active');
+      subtitlesBtn.textContent = 'CC';
+    }
+  });
+}
+
 if (subtitlesSelect) {
   subtitlesSelect.addEventListener('change', () => {
     if (!subtitlesTracks.length) return;
     const value = subtitlesSelect.value;
     subtitlesTracks.forEach(t => { t.mode = 'hidden'; });
     if (value === 'off') {
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'false');
+        subtitlesBtn.classList.remove('cc-active');
+      }
       return;
     }
     const target = subtitlesTracks.find(t => t.language === value) || subtitlesTracks[0];
     if (target) {
       target.mode = 'showing';
+      if (subtitlesBtn) {
+        subtitlesBtn.setAttribute('aria-pressed', 'true');
+        subtitlesBtn.classList.add('cc-active');
+      }
     }
   });
 }
 
 //HLS/DASH
 
-const player = dashjs.MediaPlayer().create();
+const hlsSupported = typeof Hls !== 'undefined' && Hls.isSupported();
+const dashSupported = typeof dashjs !== 'undefined' && typeof MediaSource !== 'undefined';
+let hlsInstance = null;
+let dashPlayer = null;
 
-player.initialize(
-  document.getElementById('main-video'),
-  'media/dash-mpeg/manifest.mpd',
-  true
-);
+function addProtocolOptions() {
+  const sep = document.createElement('option');
+  sep.disabled = true;
+  sep.textContent = '── Protocolo ──';
+  resoSelect.appendChild(sep);
+  if (hlsSupported)  { const o = document.createElement('option'); o.value = 'proto:hls';  o.textContent = '📡 HLS';       resoSelect.appendChild(o); }
+  if (dashSupported) { const o = document.createElement('option'); o.value = 'proto:dash'; o.textContent = '📡 MPEG-DASH'; resoSelect.appendChild(o); }
+}
 
-player.updateSettings({
-  streaming: {
-    abr: {
-      autoSwitchBitrate: { video: true, audio: true },
-      initialBitrate: { video: 1500 }
-    },
-    buffer: {
-      fastSwitchEnabled: true,
-      bufferTimeAtTopQuality: 30,
-      bufferToKeep: 10
+function initHLS() {
+  if (dashPlayer) { dashPlayer.destroy(); dashPlayer = null; }
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+
+  hlsInstance = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
+  hlsInstance.loadSource('media/hls/master.m3u8');
+  hlsInstance.attachMedia(video);
+
+  hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+    resoSelect.innerHTML = '<option value="auto">Auto</option>';
+    data.levels.forEach((q, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${q.height}p — ${Math.round(q.bitrate / 1000)} kbps`;
+      resoSelect.appendChild(opt);
+    });
+    addProtocolOptions();
+    resoSelect.value = 'auto';
+  });
+
+  hlsInstance.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+    console.log('Calidad cambiada a:', data.level);
+  });
+}
+
+function initDash() {
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+  if (dashPlayer) { dashPlayer.destroy(); dashPlayer = null; }
+
+  dashPlayer = dashjs.MediaPlayer().create();
+  dashPlayer.initialize(video, 'media/dash-mpeg/manifest.mpd', false);
+  dashPlayer.updateSettings({
+    streaming: {
+      abr: { autoSwitchBitrate: { video: true, audio: true }, initialBitrate: { video: 1500 } },
+      buffer: { fastSwitchEnabled: true, bufferTimeAtTopQuality: 30, bufferToKeep: 10 }
+    }
+  });
+
+  dashPlayer.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, (e) => {
+    console.log('Calidad cambiada a:', e);
+  });
+
+  dashPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+    const qualities = dashPlayer.getRepresentationsByType('video');
+
+    resoSelect.innerHTML = '<option value="auto">Auto</option>';
+    qualities.forEach((q) => {
+      const opt = document.createElement('option');
+      opt.value = q.height;
+      opt.textContent = `${q.height}p — ${q.bitrateInKbit} kbps`;
+      resoSelect.appendChild(opt);
+    });
+    addProtocolOptions();
+    resoSelect.value = 'auto';
+  });
+}
+
+resoSelect.addEventListener('change', () => {
+  const val = resoSelect.value;
+
+  if (val === 'proto:hls')  { initHLS();  return; }
+  if (val === 'proto:dash') { initDash(); return; }
+
+  if (hlsInstance) {
+    hlsInstance.currentLevel = val === 'auto' ? -1 : parseInt(val);
+  } else if (dashPlayer) {
+    if (val === 'auto') {
+      dashPlayer.updateSettings({ streaming: { abr: { autoSwitchBitrate: { video: true } } } });
+    } else {
+      dashPlayer.updateSettings({ streaming: { abr: { autoSwitchBitrate: { video: false } } } });
+      const qualities = dashPlayer.getRepresentationsByType('video');
+      const index = qualities.findIndex(q => q.height === parseInt(val));
+      if (index !== -1) dashPlayer.setRepresentationForTypeById('video', qualities[index].id);
     }
   }
 });
 
-player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, (e) => {
-  console.log('Calidad cambiada a:', e.newQuality);
-});
-
-player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
-  const qualities = player.getRepresentationsByType('video');
-
-  resoSelect.innerHTML = '<option value="auto">Auto</option>';
-  qualities.forEach((q) => {
-    const opt = document.createElement('option');
-    opt.value = q.height;
-    //opt.textContent = `${q.height}p`;
-    opt.textContent = `${q.height}p — ${q.bitrateInKbit} kbps`;
-    resoSelect.appendChild(opt);
-  });
-
-  resoSelect.addEventListener('change', () => {
-    const val = resoSelect.value;
-
-    if (val === 'auto') {
-      player.updateSettings({
-        streaming: { abr: { autoSwitchBitrate: { video: true } } }
-      });
-    } else {
-      player.updateSettings({
-        streaming: { abr: { autoSwitchBitrate: { video: false } } }
-      });
-
-      //const index = qualities.findIndex(q => q.height === parseInt(val));
-      //if (index !== -1) {
-        //player.setQualityFor('video', index);
-      //}
-      const index = qualities.findIndex(q => q.height === parseInt(val));
-      if (index !== -1) {
-        player.setRepresentationForTypeById('video', qualities[index].id); // ✅ v5 API
-      }
-    }
-  });
-});
-
-
-
-
-//fallback en caso de que mpeg-dash no este disponible
-if (typeof MediaSource !== 'undefined') {
-  // DASH playback
-  player.initialize(document.getElementById('main-video'), 'media/dash-mpeg/manifest.mpd', false);
+// Selección automática del mejor protocolo disponible
+if (hlsSupported || video.canPlayType('application/vnd.apple.mpegurl')) {
+  initHLS();
+} else if (dashSupported) {
+  initDash();
 } else {
-  // Fallback para navegadores muy antiguos
-  document.getElementById('main-video').src = 'media/video/video.mp4';
+  video.src = 'media/video/video.mp4';
 }

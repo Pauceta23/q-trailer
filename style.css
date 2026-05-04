@@ -434,7 +434,7 @@ video::-webkit-media-controls {
   bottom: auto;
   width: 100%;
   box-sizing: border-box;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   overflow-x: auto;
   border-top: 1px solid rgba(255,255,255,0.08);
   transition: opacity 0.3s ease;
@@ -449,7 +449,7 @@ video::-webkit-media-controls {
 
 /* Barra de progreso */
 #progress-bar {
-  flex: 1 1 auto;
+  flex: 0 0 100%;
   order: 0;
   height: 4px;
   background: rgba(255,255,255,0.25);
@@ -503,6 +503,11 @@ video::-webkit-media-controls {
   background: rgba(255,255,255,0.2);
 }
 
+#subtitles-button.cc-active {
+  background: #e53935 !important;
+  border-color: #e53935 !important;
+  color: #fff !important;
+}
 
 /* Tiempo */
 #time-display {
@@ -550,6 +555,7 @@ video::-webkit-media-controls {
   font-size: 11px;
   height: 28px;
   cursor: pointer;
+  max-width: 10%;
 }
 
 #chapters-select option {
