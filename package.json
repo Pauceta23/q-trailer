@@ -1,0 +1,23 @@
+{
+  "name": "q-trailer",
+  "version": "1.0.0",
+  "description": "Este trabajo es de la asignatura GDIE (Gestión y Distribución de la Información Empresarial). Se trata de construir una básica página web en la que reproducir un vídeo multimedia distribuido y códificado de diferentes formas en cada iteración de la práctica. Además de crear y gestionar datos VTT para aportar información extra según el momento y contenido del vídeo.",
+  "homepage": "https://github.com/Pauceta23/q-trailer#readme",
+  "bugs": {
+    "url": "https://github.com/Pauceta23/q-trailer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pauceta23/q-trailer.git"
+  },
+  "license": "ISC",
+  "author": "Pau, Jaume",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
