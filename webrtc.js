@@ -11,6 +11,11 @@ let answered = false;
 let countdownTimer = null;
 let syncInterval = null;
 
+// WebRTC DataChannels (fun facts peer-to-peer)
+const peerConnections = {};
+const dataChannels = {};
+const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
 // ── DOM ───────────────────────────────────────────────────────────────────────
 const screenJoin = document.getElementById('screen-join');
 const screenGame = document.getElementById('screen-game');
@@ -91,6 +96,11 @@ socket.on('joined', ({ isHost: host, room }) => {
 
 socket.on('player-list', (players) => {
   renderScoreboard(players);
+  for (const p of players) {
+    if (p.id !== socket.id && !peerConnections[p.id] && socket.id < p.id) {
+      createPeerConnection(p.id, true);
+    }
+  }
 });
 
 socket.on('new-host', (hostId) => {
@@ -141,7 +151,9 @@ socket.on('question-end', ({ funFact, correctIndex, scores }) => {
     questionActive = false;
     if (!video.paused) return;
     video.play().catch(() => {});
-    if (funFact) showFunFact(funFact);
+    // Solo el host envía el fun fact por DataChannel (P2P); él también lo muestra.
+    // Los no-host lo reciben por DataChannel en dc.onmessage → showFunFact.
+    if (funFact && isHost) broadcastFunFact(funFact);
   }, 2500);
 });
 
@@ -155,6 +167,23 @@ socket.on('quiz-end', ({ scores }) => {
   renderPodium(scores);
   renderFinalScores(scores);
   showScreen('end');
+});
+
+socket.on('webrtc-signal', async ({ from, signal }) => {
+  if (!peerConnections[from]) await createPeerConnection(from, false);
+  const pc = peerConnections[from];
+  try {
+    if (signal.type === 'offer') {
+      await pc.setRemoteDescription(new RTCSessionDescription(signal));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socket.emit('webrtc-signal', { to: from, signal: pc.localDescription });
+    } else if (signal.type === 'answer') {
+      await pc.setRemoteDescription(new RTCSessionDescription(signal));
+    } else if (signal.candidate) {
+      await pc.addIceCandidate(new RTCIceCandidate(signal));
+    }
+  } catch {}
 });
 
 // ── Host: end quiz ────────────────────────────────────────────────────────────
@@ -361,6 +390,9 @@ function renderFinalScores(scores) {
 }
 
 btnPlayAgain.addEventListener('click', () => {
+  Object.values(peerConnections).forEach(pc => pc.close());
+  Object.keys(peerConnections).forEach(k => delete peerConnections[k]);
+  Object.keys(dataChannels).forEach(k => delete dataChannels[k]);
   triggeredTimes.clear();
   quizQuestions = [];
   questionActive = false;
@@ -368,6 +400,43 @@ btnPlayAgain.addEventListener('click', () => {
   funfactsList.innerHTML = '';
   showScreen('game');
 });
+
+// ── WebRTC DataChannel (fun facts P2P) ───────────────────────────────────────
+async function createPeerConnection(peerId, initiator) {
+  const pc = new RTCPeerConnection(ICE);
+  peerConnections[peerId] = pc;
+  pc.onicecandidate = ({ candidate }) => {
+    if (candidate) socket.emit('webrtc-signal', { to: peerId, signal: candidate });
+  };
+  if (initiator) {
+    const dc = pc.createDataChannel('funfacts');
+    dataChannels[peerId] = dc;
+    setupDataChannel(dc);
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    socket.emit('webrtc-signal', { to: peerId, signal: pc.localDescription });
+  } else {
+    pc.ondatachannel = ({ channel }) => {
+      dataChannels[peerId] = channel;
+      setupDataChannel(channel);
+    };
+  }
+  return pc;
+}
+
+function setupDataChannel(dc) {
+  dc.onmessage = ({ data }) => {
+    try { showFunFact(JSON.parse(data).funFact); } catch {}
+  };
+}
+
+function broadcastFunFact(funFact) {
+  const msg = JSON.stringify({ funFact });
+  Object.values(dataChannels).forEach(dc => {
+    if (dc.readyState === 'open') dc.send(msg);
+  });
+  showFunFact(funFact);
+}
 
 function showFunFact(funFact) {
   funfactsPanel.style.display = 'block';
