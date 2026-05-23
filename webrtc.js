@@ -24,7 +24,9 @@ const joinError  = document.getElementById('join-error');
 const gameRoomCode = document.getElementById('game-room-code');
 const badgeHost    = document.getElementById('badge-host');
 const btnEndQuiz   = document.getElementById('btn-end-quiz');
-const scoreboard   = document.getElementById('scoreboard');
+const scoreboard    = document.getElementById('scoreboard');
+const funfactsPanel = document.getElementById('funfacts-panel');
+const funfactsList  = document.getElementById('funfacts-list');
 const video         = document.getElementById('game-video');
 const gameControls  = document.getElementById('game-controls');
 const gameContainer = document.getElementById('game-player-container');
@@ -130,7 +132,7 @@ socket.on('answer-result', ({ correct, points, correctIndex }) => {
   showFeedback(correct, points);
 });
 
-socket.on('question-end', ({ correctIndex, scores }) => {
+socket.on('question-end', ({ funFact, correctIndex, scores }) => {
   stopCountdown();
   markOptions(correctIndex);
   renderScoreboard(scores);
@@ -139,6 +141,7 @@ socket.on('question-end', ({ correctIndex, scores }) => {
     questionActive = false;
     if (!video.paused) return;
     video.play().catch(() => {});
+    if (funFact) showFunFact(funFact);
   }, 2500);
 });
 
@@ -361,6 +364,15 @@ btnPlayAgain.addEventListener('click', () => {
   triggeredTimes.clear();
   quizQuestions = [];
   questionActive = false;
+  funfactsPanel.style.display = 'none';
+  funfactsList.innerHTML = '';
   showScreen('game');
 });
 
+function showFunFact(funFact) {
+  funfactsPanel.style.display = 'block';
+  const el = document.createElement('div');
+  el.className = 'rtc-funfact';
+  el.textContent = funFact;
+  funfactsList.prepend(el);
+}
