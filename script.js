@@ -871,3 +871,74 @@ if (hlsSupported || video.canPlayType('application/vnd.apple.mpegurl')) {
 } else {
   video.src = 'media/video/video.mp4';
 }
+
+// ── Quiz single-player ──────────────────────────────────────────────────────
+
+const quizPanel = document.getElementById('quiz');
+let quizQuestions = [];
+const shownQuestions = new Set();
+let quizScore = 0;
+
+fetch('/media/quiz.json')
+  .then(r => r.json())
+  .then(data => {
+    quizQuestions = data.sort((a, b) => a.time - b.time);
+  })
+  .catch(() => {});
+
+video.addEventListener('timeupdate', () => {
+  if (!quizQuestions.length) return;
+  const t = video.currentTime;
+  for (const q of quizQuestions) {
+    if (!shownQuestions.has(q.time) && t >= q.time && t <= q.time + 4) {
+      shownQuestions.add(q.time);
+      renderQuizQuestion(q);
+      break;
+    }
+  }
+});
+
+function renderQuizQuestion(q) {
+  if (!quizPanel) return;
+  const labels = ['A', 'B', 'C', 'D'];
+  const btns = q.options.map((opt, i) => `
+    <button class="quiz-option" data-index="${i}">
+      <strong>${labels[i]}.</strong> ${opt}
+    </button>`).join('');
+
+  quizPanel.innerHTML = `
+    <figcaption>Quiz — ${q.movie}</figcaption>
+    <p class="quiz-question">${q.question}</p>
+    <div class="quiz-options">${btns}</div>
+    <p style="margin-top:8px;font-size:0.85rem;color:rgba(255,255,255,0.5)">
+      Puntuación: <strong id="quiz-score-val">${quizScore}</strong>
+    </p>
+  `;
+
+  quizPanel.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => handleQuizAnswer(btn, q), { once: true });
+  });
+}
+
+function handleQuizAnswer(clickedBtn, q) {
+  const chosen = parseInt(clickedBtn.dataset.index);
+  quizPanel.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = true;
+    const i = parseInt(btn.dataset.index);
+    if (i === q.correct) btn.classList.add('is-correct');
+    else if (i === chosen) btn.classList.add('is-wrong');
+  });
+
+  if (chosen === q.correct) quizScore += 100;
+
+  const feedbackEl = document.createElement('div');
+  feedbackEl.className = 'quiz-feedback';
+  feedbackEl.style.color = chosen === q.correct ? '#2ecc71' : '#e74c3c';
+  feedbackEl.innerHTML = chosen === q.correct
+    ? `<strong>¡Correcto! +100pts</strong><br><em style="color:#ccc">${q.fun_fact}</em>`
+    : `<strong>Incorrecto</strong><br><em style="color:#ccc">${q.fun_fact}</em>`;
+  quizPanel.appendChild(feedbackEl);
+
+  const scoreEl = quizPanel.querySelector('#quiz-score-val');
+  if (scoreEl) scoreEl.textContent = quizScore;
+}

@@ -1,0 +1,416 @@
+/* ── Shared layout ─────────────────────────────────────────────────────────── */
+.rtc-screen {
+  min-height: 70vh;
+}
+
+/* ── Panels ─────────────────────────────────────────────────────────────────── */
+.rtc-panel {
+  background: rgba(18, 18, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+  padding: 1.25rem;
+  color: #fff;
+}
+
+.rtc-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.rtc-panel-title {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────────── */
+.rtc-badge-host {
+  background: #b71c1c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.rtc-badge-score {
+  background: rgba(229, 57, 53, 0.2);
+  border: 1px solid rgba(229, 57, 53, 0.5);
+  color: #ef9a9a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+/* ── Join screen ─────────────────────────────────────────────────────────────── */
+#screen-join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3rem;
+}
+
+.rtc-join-card {
+  background: rgba(18, 18, 18, 0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.rtc-join-card h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.rtc-subtitle {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+
+.rtc-hint {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+}
+
+.rtc-input {
+  background: rgba(0,0,0,0.4) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+  border-radius: 8px;
+}
+
+.rtc-input:focus {
+  border-color: rgba(229, 57, 53, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15) !important;
+  color: #fff !important;
+}
+
+.rtc-input::placeholder { color: rgba(255,255,255,0.3) !important; }
+
+.form-label { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+
+.rtc-error { color: #ef5350; font-size: 0.85rem; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.rtc-btn-primary {
+  background: #c62828;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.rtc-btn-primary:hover { background: #e53935; color: #fff; }
+
+.rtc-btn-secondary {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+.rtc-btn-secondary:hover { background: rgba(255,255,255,0.16); color: #fff; }
+
+.rtc-btn-danger {
+  background: rgba(183, 28, 28, 0.3);
+  border: 1px solid rgba(183, 28, 28, 0.6);
+  color: #ef9a9a;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.rtc-btn-danger:hover { background: rgba(183, 28, 28, 0.5); color: #fff; }
+
+/* ── Game video player (shared) ──────────────────────────────────────────────── */
+#game-player-container {
+  position: relative;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#game-video {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+}
+
+#game-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.25s;
+}
+
+#game-controls[data-state="hidden"] { opacity: 0; pointer-events: none; }
+#game-controls[data-state="visible"] { opacity: 1; pointer-events: auto; }
+
+#game-controls.controls-disabled { pointer-events: none; opacity: 0.45; }
+
+.progress-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+#game-progress-buffer {
+  position: absolute;
+  height: 100%;
+  background: rgba(255,255,255,0.35);
+  border-radius: 2px;
+}
+
+#game-progress-fill {
+  position: absolute;
+  height: 100%;
+  background: #e53935;
+  border-radius: 2px;
+  width: 0%;
+}
+
+#game-play-btn, #game-fs-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+#game-time-display {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+/* ── Question overlay (appears for EVERYONE) ─────────────────────────────────── */
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 10px;
+}
+
+.game-overlay-inner {
+  background: rgba(20, 8, 8, 0.96);
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  max-width: 90%;
+  width: 90%;
+  text-align: center;
+}
+
+.overlay-movie {
+  color: #ef9a9a;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.overlay-question {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.overlay-countdown {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 3px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 auto 1rem;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.overlay-countdown-urgent {
+  border-color: #e53935 !important;
+  color: #ef9a9a !important;
+  animation: rtc-pulse 0.5s infinite alternate;
+}
+
+.overlay-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  text-align: left;
+  margin-bottom: 0.75rem;
+}
+
+.overlay-option-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.88rem;
+  color: #e0e0e0;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.overlay-option-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(229, 57, 53, 0.5);
+  transform: translateX(2px);
+}
+
+.overlay-option-btn:disabled { cursor: default; }
+
+.overlay-opt-correct {
+  background: rgba(46, 204, 113, 0.15) !important;
+  border-color: #2ecc71 !important;
+  color: #a5d6a7 !important;
+}
+
+.overlay-opt-wrong {
+  background: rgba(231, 76, 60, 0.1) !important;
+  border-color: rgba(231, 76, 60, 0.4) !important;
+  color: #ef9a9a !important;
+  opacity: 0.65;
+}
+
+.overlay-feedback {
+  margin-top: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.overlay-feedback-correct {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.4);
+}
+
+.overlay-feedback-wrong {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+@keyframes rtc-pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.1); }
+}
+
+
+/* ── Scoreboard ──────────────────────────────────────────────────────────────── */
+.rtc-score-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 7px;
+  margin-bottom: 0.2rem;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.rtc-score-row.rtc-score-me {
+  background: rgba(229, 57, 53, 0.12);
+  border: 1px solid rgba(229, 57, 53, 0.25);
+  color: #fff;
+  font-weight: 600;
+}
+
+.rtc-pos { width: 1.4rem; color: rgba(255,255,255,0.35); font-size: 0.78rem; }
+.rtc-name { flex: 1; }
+.rtc-pts { color: #ef9a9a; font-weight: 600; font-size: 0.82rem; }
+
+
+/* ── End screen ──────────────────────────────────────────────────────────────── */
+#screen-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2rem;
+}
+
+.rtc-end-card {
+  background: rgba(18, 18, 18, 0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 580px;
+  text-align: center;
+  color: #fff;
+}
+
+.rtc-end-card h2 { margin-bottom: 2rem; }
+
+.rtc-podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rtc-podium-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px 10px 0 0;
+  padding: 1rem 1rem 0.5rem;
+  min-width: 100px;
+}
+
+.rtc-podium-1 { background: rgba(183,137,0,0.15); border: 2px solid #f9a825; height: 150px; justify-content: flex-start; }
+.rtc-podium-2 { background: rgba(80,80,80,0.15);  border: 2px solid #9e9e9e; height: 120px; justify-content: flex-start; }
+.rtc-podium-3 { background: rgba(120,60,0,0.15);  border: 2px solid #a1887f; height: 100px; justify-content: flex-start; }
+
+.rtc-medal { font-size: 1.8rem; }
+.rtc-podium-name { color: #fff; font-weight: 700; font-size: 0.9rem; margin-top: 0.2rem; }
+.rtc-podium-score { color: rgba(255,255,255,0.55); font-size: 0.78rem; }
+
+.rtc-table { color: rgba(255,255,255,0.8); font-size: 0.88rem; }
+.rtc-table thead th { color: rgba(255,255,255,0.45); font-weight: 600; border-color: rgba(255,255,255,0.1); }
+.rtc-table td { border-color: rgba(255,255,255,0.07); }
+.rtc-table-me { background: rgba(229, 57, 53, 0.1) !important; color: #fff; }
+
+@media (max-width: 576px) {
+  .overlay-options { grid-template-columns: 1fr; }
+  .game-overlay-inner { padding: 1rem 1.25rem; }
+  .rtc-podium-place { min-width: 80px; padding: 0.75rem 0.5rem 0.4rem; }
+}
