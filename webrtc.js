@@ -399,6 +399,7 @@ btnPlayAgain.addEventListener('click', () => {
   questionActive = false;
   funfactsPanel.style.display = 'none';
   funfactsList.innerHTML = '';
+  video.currentTime = 0;
   showScreen('game');
 });
 
