@@ -162,6 +162,7 @@ socket.on('score-update', (players) => {
 });
 
 socket.on('quiz-end', ({ scores }) => {
+  video.pause();
   stopCountdown();
   hideOverlay();
   renderPodium(scores);
