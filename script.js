@@ -17,6 +17,7 @@ const progressBuf = document.getElementById('progress-buffer');
 const timeDisplay = document.getElementById('time-display');
 
 const resoSelect = document.getElementById('resolution-select');
+const formatSelect = document.getElementById('format-select');
 const fsBtn = document.getElementById('fullscreen-button');
 const subtitlesBtn = document.getElementById('subtitles-button');
 const subtitlesSelect = document.getElementById('subtitles-select');
@@ -778,12 +779,26 @@ let hlsInstance = null;
 let dashPlayer = null;
 
 function addProtocolOptions() {
-  const sep = document.createElement('option');
-  sep.disabled = true;
-  sep.textContent = '── Protocolo ──';
-  resoSelect.appendChild(sep);
-  if (hlsSupported)  { const o = document.createElement('option'); o.value = 'proto:hls';  o.textContent = '📡 HLS';       resoSelect.appendChild(o); }
-  if (dashSupported) { const o = document.createElement('option'); o.value = 'proto:dash'; o.textContent = '📡 MPEG-DASH'; resoSelect.appendChild(o); }
+  if (hlsSupported)  {
+    const o = document.createElement('option');
+    o.value = 'proto:hls';
+    o.textContent = 'HLS';
+    formatSelect.appendChild(o);
+  }
+
+  if (dashSupported) {
+    const o = document.createElement('option');
+    o.value = 'proto:dash';
+    o.textContent = 'MPEG-DASH';
+    formatSelect.appendChild(o);
+  }
+
+  if (!dashSupported && !hlsSupported) {
+    const o = document.createElement('option');
+    o.textContent = 'None of the protocols are available';
+    o.disabled = true;
+    formatSelect.appendChild(o);
+  }
 }
 
 function initHLS() {
@@ -802,8 +817,8 @@ function initHLS() {
       opt.textContent = `${q.height}p — ${Math.round(q.bitrate / 1000)} kbps`;
       resoSelect.appendChild(opt);
     });
-    addProtocolOptions();
     resoSelect.value = 'auto';
+    resoSelect.dispatchEvent(new Event('change'));
   });
 
   hlsInstance.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
@@ -838,16 +853,13 @@ function initDash() {
       opt.textContent = `${q.height}p — ${q.bitrateInKbit} kbps`;
       resoSelect.appendChild(opt);
     });
-    addProtocolOptions();
     resoSelect.value = 'auto';
+    resoSelect.dispatchEvent(new Event('change'));
   });
 }
 
 resoSelect.addEventListener('change', () => {
   const val = resoSelect.value;
-
-  if (val === 'proto:hls')  { initHLS();  return; }
-  if (val === 'proto:dash') { initDash(); return; }
 
   if (hlsInstance) {
     hlsInstance.currentLevel = val === 'auto' ? -1 : parseInt(val);
@@ -863,6 +875,19 @@ resoSelect.addEventListener('change', () => {
   }
 });
 
+formatSelect.addEventListener('change', () => {
+  const val = formatSelect.value;
+
+  if (val === 'proto:hls')  { 
+    initHLS();
+  }
+  else if (val === 'proto:dash') {
+    initDash();
+  }
+
+});
+
+addProtocolOptions();
 // Selección automática del mejor protocolo disponible
 if (hlsSupported || video.canPlayType('application/vnd.apple.mpegurl')) {
   initHLS();

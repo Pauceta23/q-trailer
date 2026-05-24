@@ -60,19 +60,8 @@
 
               <!-- SELECTOR DE FORMATO -->
               <div class="format-selector">
-                <label for="format-select" style="color: white; font-size: 12px;">🎬</label>
-                <select id="format-select">
-                  <option value="dash">DASH</option>
-                  <option value="hls">HLS</option>
-                </select>
-              </div>
-
-              <!-- Dentro de #video-controls, añade este selector antes o después de resolution-select -->
-              <div class="format-selector">
                 <label for="format-select" style="color: white; font-size: 12px; margin-right: 5px;">Formato:</label>
                 <select id="format-select">
-                  <option value="dash">DASH (MPEG-DASH)</option>
-                  <option value="hls">HLS (Apple HLS)</option>
                 </select>
               </div>
 
@@ -80,9 +69,6 @@
 
               <select id="resolution-select">
                 <option value="auto">Auto</option>
-                <option value="360">360p</option>
-                <option value="720">720p</option>
-                <option value="2160">2160p</option>
               </select>
 
               <select id="subtitles-select">
@@ -103,18 +89,6 @@
             </div>
           </figure>
 
-<!--          <figure id="related-movies" class="container-panel">
-            <figcaption>Peliculas similares</figcaption>
-            <div>
-              <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp"
-                alt="Poster pelicula relacionada">
-              <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp"
-                alt="Poster pelicula relacionada">
-              <img class="related-movie" src="media/img/start-wars-the-force-awakens.webp"
-                alt="Poster pelicula relacionada">
-            </div>
-          </figure>
--->
           <figure id="synopsis" class="container-panel">
             <figcaption>Sinopsis</figcaption>
             <p>Selecciona un capitulo para ver su sinopsis.</p>
